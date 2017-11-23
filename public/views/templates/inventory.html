@@ -1,0 +1,46 @@
+<div class="container-fluid">
+  <div class="jumbotron">
+    <div class="alt-table-responsive">
+      <h3>Inventory</h3>
+      <table class="table table-hover table-condensed">
+        <thead>
+          <tr>
+            <th colspan="4" class="hidden-xs">
+              <md-input-container>
+                <label>Bead Type</label>
+                <md-select ng-model="selectedType">
+                  <md-option ng-value="type" ng-repeat="type in typesForFilter">{{type}}</md-option>
+                </md-select>
+              </md-input-container>
+            </th>
+            <th class="col-md-1 col-sm-1 col-xs-1">ID<br>(Chronic)</th>
+            <th class="col-md-2 col-sm-3 col-xs-3">Bead Name</th>
+            <th class="col-md-2 col-sm-2 col-xs-2">Total# of Beads<br>(Unreceived)<br>[Backorder]</th>
+            <th ng-repeat="dt in dates" ng-show="$index >= 0 && $index < 3">{{dt.substring(5,10)}}</th>
+            <th ng-repeat="dt in dates" ng-show="$index >= 3 && $index < 5" class="hidden-xs">{{dt.substring(5,10)}}</th>
+            <th ng-repeat="dt in dates" ng-show="$index >= 5 && $index < 8" class="hidden-sm hidden-xs">{{dt.substring(5,10)}}</th>
+          </tr>
+        </thead>
+        <tbody ng-repeat="inv in invs | filter : typeFilter">
+          <tr>
+            <td class="hidden-xs"><button class="btn btn-danger btn-sm" ng-click="showPromptOrder($event, inv)">Order</button></td>
+            <td class="hidden-xs"><button class="btn btn-primary btn-sm" ng-click="showPromptAdd($event, inv)">Add</button></td>
+            <td class="hidden-xs"><button class="btn btn-warning btn-sm" ng-click="showPromptDeliver($event, inv)">Delv</button></td>
+            <td class="hidden-xs"><img src="images/{{inv.bead}}.jpg" width="50px" height="50px"></td>
+            <td class="col-md-1 col-sm-1 col-xs-1">{{inv.id}}<br><span ng-show="inv.id_chronic">({{inv.id_chronic}})</span></td>
+            <td class="col-md-2 col-sm-3 col-xs-3">{{inv.bead}}<br>{{inv.bead_jp}}</td>
+            <td class="col-md-2 col-sm-2 col-xs-2">{{inv.total}}<br>{{inv.unreceived_total}}<br>{{inv.backorder_total}}</td>
+            <td>{{inv.qty0}}<br>{{inv.unreceived_qty0}}<br>{{inv.backorder_qty0}}</td>
+            <td>{{inv.qty1}}<br>{{inv.unreceived_qty1}}<br>{{inv.backorder_qty1}}</td>
+            <td>{{inv.qty2}}<br>{{inv.unreceived_qty2}}<br>{{inv.backorder_qty2}}</td>
+            <td class="hidden-xs">{{inv.qty3}}<br>{{inv.unreceived_qty3}}<br>{{inv.backorder_qty3}}</td>
+            <td class="hidden-xs">{{inv.qty4}}<br>{{inv.unreceived_qty4}}<br>{{inv.backorder_qty4}}</td>
+            <td class="hidden-sm hidden-xs">{{inv.qty5}}<br>{{inv.unreceived_qty5}}<br>{{inv.backorder_qty5}}</td>
+            <td class="hidden-sm hidden-xs">{{inv.qty6}}<br>{{inv.unreceived_qty6}}<br>{{inv.backorder_qty6}}</td>
+            <td class="hidden-sm hidden-xs">{{inv.qty7}}<br>{{inv.unreceived_qty7}}<br>{{inv.backorder_qty7}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

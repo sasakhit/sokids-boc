@@ -1,0 +1,36 @@
+{
+  "name": "eInv",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "author": "PK",
+  "license": "ISC",
+  "dependencies": {
+    "angular": "^1.5.2",
+    "angular-animate": "^1.5.2",
+    "angular-moment": "^1.0.0-beta.6",
+    "angular-route": "^1.5.2",
+    "angular-cookies": "^1.5.2",
+    "angular-ui-bootstrap": "^1.2.5",
+    "aws": "0.0.3-2",
+    "aws-sdk": "^2.3.1",
+    "bluebird": "*",
+    "body-parser": "^1.15.0",
+    "bootstrap": "^3.3.6",
+    "express": "^4.13.4",
+    "express-session": "^1.13.0",
+    "font-awesome": "^4.5.0",
+    "fs": "0.0.1-security",
+    "moment": "^2.15.1",
+    "ng-tags-input": "^3.0.0",
+    "sendgrid": "^2.0.0",
+    "sqlite3": "^3.1.4",
+    "pg": "^6.1.0",
+    "pg-promise": "^5.4.3",
+    "paper-css": "^0.3.0"
+  }
+}

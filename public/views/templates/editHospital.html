@@ -1,0 +1,58 @@
+<md-dialog layout-padding aria-label="Edit Entry">
+  <h4>Edit Entry: {{name}}</h4>
+  <br>
+  <md-content layout-padding layout="column" style="max-width:100%; max-height:100%;">
+
+    <div id="mediumDiv">
+      <div layout="row">
+        <div class="form-group" flex="30">
+          <label for="postal">Postal:</label>
+          <input class="form-control" type="text" ng-model="postal">
+        </div>
+        <div class="form-group" flex="70">
+          <label for="address">Address:</label>
+          <input class="form-control" type="text" ng-model="address">
+        </div>
+      </div>
+
+      <div layout="row">
+        <div class="form-group">
+          <label for="dept">Department:</label>
+          <input class="form-control" type="text" ng-model="dept">
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone:</label>
+          <input class="form-control" type="text" ng-model="phone">
+        </div>
+      </div>
+
+      <div  layout="row">
+        <div class="form-group">
+          <label for="title">Title:</label>
+          <input class="form-control" type="text" ng-model="title">
+        </div>
+        <div class="form-group">
+          <label for="contact1">Contact1:</label>
+          <input class="form-control" type="text" ng-model="contact1">
+        </div>
+      </div>
+
+      <div  layout="row">
+        <div class="form-group">
+          <label for="contact2">Contact2:</label>
+          <input class="form-control" type="text" ng-model="contact2">
+        </div>
+        <div class="form-group">
+          <label for="email">Email:</label>
+          <input class="form-control" type="text" ng-model="email">
+        </div>
+      </div>
+    </div>
+
+    <md-dialog-actions>
+      <md-button class="md-warn md-raised" style="background-color:red" ng-click="delete()">Delete</md-button>
+      <md-button class="md-warn md-raised" ng-click="cancel()">Cancel</md-button>
+      <md-button class="md-primary md-raised" ng-click="ok(postal, address, phone, dept, title, contact1, contact2, email);">Update</md-button>
+    </md-dialog-actions>
+  </md-content>
+</md-dialog>

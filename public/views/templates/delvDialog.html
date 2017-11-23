@@ -1,0 +1,32 @@
+<md-dialog layout-padding aria-label="Deliver">
+  <h4>Deliver to Hospitals: {{selectedBead}}<span ng-show="showBackorder"><br>(for Backorder)</span></h4>
+  <br>
+  <md-content layout-padding layout="column" style="max-width:800px;max-height:810px;">
+    
+    <div id="mediumDiv">
+      <div class="form-group">
+        <label for="asof">Date (yyyy/mm/dd):</label>
+        <input class="form-control" type="text" ng-model="asof">
+      </div>
+
+      <label>Hospital:</label>
+      <md-select ng-model="hospital" aria-label="Hospital:" ng-disabled="showBackorder">
+        <md-option ng-value="hos" ng-repeat="hos in hospitals">{{hos}}</md-option>
+      </md-select>
+
+      <label>Quantity (by number of beads):</label>
+      <div class="form-group">
+        <input class="form-control" type="number" ng-model="qty" placeholder="by number of beads">
+      </div>
+
+      <label ng-hide="showBackorder">Backorder Flag:</label>
+      <input type="checkbox" ng-model="backorder_flag" ng-hide="showBackorder">
+    </div>
+
+    <md-dialog-actions>
+      <md-button class="md-warn md-raised" ng-click="cancel()">Cancel</md-button>
+      <md-button class="md-primary md-raised" ng-click="ok(asof, qty, hospital, backorder_flag);">OK</md-button>
+    </md-dialog-actions>
+
+  </md-content>
+</md-dialog>

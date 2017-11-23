@@ -1,0 +1,23 @@
+<md-dialog layout-padding aria-label="Receive from Supplier">
+  <h4>Add to Inventory: {{selectedBead}}</h4>
+  <br>
+  <md-content layout-padding layout="column" style="max-width:800px;max-height:810px;">
+
+    <div id="mediumDiv">
+      <div class="form-group">
+        <label for="asof">Date (yyyy/mm/dd):</label>
+        <input class="form-control" type="text" ng-model="asof">
+      </div>
+
+      <label>Quantity (by bag - lotsize: {{lotsize}}):</label>
+      <div class="form-group">
+        <input class="form-control" type="number" ng-model="qty" placeholder="by bag (integer and/or fraction)">
+      </div>
+    </div>
+
+    <md-dialog-actions>
+      <md-button class="md-warn md-raised" ng-click="cancel()">Cancel</md-button>
+      <md-button class="md-primary md-raised" ng-click="ok(asof, qty * lotsize);">OK</md-button>
+    </md-dialog-actions>
+  </md-content>
+</md-dialog>

@@ -1,0 +1,50 @@
+<div class="container-fluid">
+  <div class="jumbotron">
+    <div class="alt-table-responsive">
+      <h3>Transaction History</h3>
+
+      <md-input-container>
+        <label>Hospital</label>
+        <md-select ng-model="selectedHospital">
+          <md-option ng-value="hospital" ng-repeat="hospital in hospitalsForFilter">{{hospital}}</md-option>
+        </md-select>
+      </md-input-container>
+      <md-input-container>
+        <label>Comment</label>
+        <md-select ng-model="selectedComment">
+          <md-option ng-value="comment" ng-repeat="comment in commentsForFilter">{{comment}}</md-option>
+        </md-select>
+      </md-input-container>
+
+      <table class="table table-hover table-condensed">
+        <thead>
+          <tr>
+            <th class="col-md-1 col-sm-1 hidden-xs"></th>
+            <th class="col-md-2 col-sm-2 col-xs-2">Date</th>
+            <th class="col-md-2 col-sm-2 col-xs-2">Bead Name</th>
+            <th class="col-md-2 col-sm-2 col-xs-2"># of Beads</th>
+            <th class="col-md-2 col-sm-2 col-xs-2">Hospital</th>
+            <th class="col-md-2 col-sm-2 col-xs-2">Comment</th>
+          </tr>
+        </thead>
+        <tbody ng-repeat="inv in invs | filter : hospitalFilter | filter : commentFilter">
+          <tr>
+            <td class="hidden-xs"><button class="btn btn-primary btn-sm" ng-click="editInventory($event, inv)">Edit</button></td>
+            <td>{{inv.asof}}</td>
+            <td>{{inv.name}}</td>
+            <td ng-switch="inv.showBracket">
+              <span ng-switch-when="square">[{{inv.qty}}]</span>
+              <span ng-switch-when="round">({{inv.qty}})</span>
+              <span ng-switch-default>{{inv.qty}}</span>
+            </td>
+            <td>{{inv.party}}</td>
+            <td ng-switch="inv.showBackorder">
+              <span ng-switch-when="true"><button class="btn btn-warning btn-sm" ng-click="deliverForBackorder($event, inv)">{{inv.comment}}</button></span>
+              <span ng-switch-default>{{inv.comment}}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
