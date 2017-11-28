@@ -1,40 +1,38 @@
 <div class="container-fluid">
-  <div class="jumbotron">
-    <div class="alt-table-responsive">
-      <h3>Beads</h3>
-      <table class="table table-hover table-condensed">
-        <thead>
-          <tr>
-            <th colspan="2" class="col-md-2 col-sm-2 hidden-xs">
-              <md-input-container>
-                <label>Bead Type</label>
-                  <md-select ng-model="selectedType">
-                    <md-option ng-value="type" ng-repeat="type in typesForFilter">{{type}}</md-option>
-                  </md-select>
-              </md-input-container>
-            </th>
-            <th class="col-md-1 col-sm-1 col-xs-1">Bead Type</th>
-            <th class="col-md-1 col-sm-1 col-xs-1">ID<br>(Chronic)</th>
-            <th class="col-md-3 col-sm-3 col-xs-3">Bead Name<br>Bead Name (JP)</th>
-            <th class="col-md-4 col-sm-4 col-xs-4">Description</th>
-            <th class="col-md-1 col-sm-1 hidden-xs">Lot Size</th>
-            <th class="col-md-1 col-sm-1 hidden-xs">Price ($)</th>
-          </tr>
-        </thead>
-        <tbody ng-repeat="bead in beads | filter : typeFilter ">
-          <tr>
-            <td class="hidden-xs"><button class="btn btn-primary" ng-click="editBead($event, bead)">Edit</button></td>
-            <td class="hidden-xs"><img src="images/{{bead.name}}.jpg" width="60px" height="60px"></td>
-            <td>{{bead.type}}</td>
-            <td>{{bead.id}}<br><span ng-show="bead.id_chronic">({{bead.id_chronic}})</span></td>
-            <td>{{bead.name}}<br>{{bead.name_jp}}</td>
-            <td>{{bead.description}}</td>
-            <td class="hidden-xs">{{bead.lotsize}}</td>
-            <td class="hidden-xs">{{bead.price}}</td>
-          </tr>
-        </tbody>
-      </table>
-      <button class="btn btn-warning" ng-click="newBead($event)">New</button>
-    </div>
+  <div class="alt-table-responsive">
+    <h3>Beads</h3>
+    <table class="table table-hover table-condensed">
+      <thead>
+        <tr>
+          <th colspan="2" class="col-md-2 col-sm-2 hidden-xs">
+            <md-input-container>
+              <label>Bead Type</label>
+                <md-select ng-model="selectedType">
+                  <md-option ng-value="type" ng-repeat="type in typesForFilter">{{type}}</md-option>
+                </md-select>
+            </md-input-container>
+          </th>
+          <th class="col-md-1 col-sm-1 col-xs-1">Bead Type</th>
+          <th class="col-md-1 col-sm-1 col-xs-1">ID<br>(Chronic)</th>
+          <th class="col-md-3 col-sm-3 col-xs-3">Bead Name<br>Bead Name (JP)</th>
+          <th class="col-md-4 col-sm-4 col-xs-4">Description</th>
+          <th class="col-md-1 col-sm-1 hidden-xs">Lot Size</th>
+          <th class="col-md-1 col-sm-1 hidden-xs">Price ($)</th>
+        </tr>
+      </thead>
+      <tbody ng-repeat="bead in beads | filter : typeFilter ">
+        <tr>
+          <td class="hidden-xs"><button class="btn btn-primary" ng-click="editBead($event, bead)">Edit</button></td>
+          <td class="hidden-xs"><img src="images/{{bead.name}}.jpg" width="60px" height="60px"></td>
+          <td>{{bead.type}}</td>
+          <td>{{bead.id}}<br><span ng-show="bead.id_chronic">({{bead.id_chronic}})</span></td>
+          <td>{{bead.name}}<br>{{bead.name_jp}}</td>
+          <td>{{bead.description}}</td>
+          <td class="hidden-xs">{{bead.lotsize}}</td>
+          <td class="hidden-xs">{{bead.price}}</td>
+        </tr>
+      </tbody>
+    </table>
+    <button class="btn btn-warning" ng-click="newBead($event)">New</button>
   </div>
 </div>

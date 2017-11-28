@@ -83,11 +83,11 @@ myApp.controller('inventoryController',
       function dialogController($scope, $mdDialog, selectedAsof, inv) {
         $scope.selectedBead = inv.bead;
         $scope.lotsize = inv.lotsize;
-        $scope.asof = (selectedAsof) ? selectedAsof : $filter('date')(new Date(), "yyyy/MM/dd");
+        $scope.asof = (selectedAsof) ? new Date(selectedAsof) : new Date();
 
         $scope.ok = function(asof, qty) {
           $cookies.put('asofOrder', asof);
-          DataService.insertInventory(inv, asof, inv.bead, qty, "Order");
+          DataService.insertInventory(inv, $filter('date')(asof, "yyyy/MM/dd"), inv.bead, qty, "Order");
           $mdDialog.hide();
         }
 
@@ -126,14 +126,14 @@ myApp.controller('inventoryController',
       function dialogController($scope, $mdDialog, selectedAsof, inv) {
         $scope.selectedBead = inv.bead;
         $scope.lotsize = inv.lotsize;
-        $scope.asof = (selectedAsof) ? selectedAsof : $filter('date')(new Date(), "yyyy/MM/dd");
+        $scope.asof = (selectedAsof) ? new Date(selectedAsof) : new Date();
 
         $scope.ok = function(asof, qty) {
           if (qty > aunreceived_total) {
             alert('Add quantity should be <= Unreceived quantity');
           } else {
             $cookies.put('asofAdd', asof);
-            DataService.insertInventory(inv, asof, inv.bead, qty, "Receive");
+            DataService.insertInventory(inv, $filter('date')(asof, "yyyy/MM/dd"), inv.bead, qty, "Receive");
             $mdDialog.hide();
           }
         }
@@ -184,7 +184,7 @@ myApp.controller('inventoryController',
         $scope.selectedBead = inv.bead;
         $scope.lotsize = inv.lotsize;
         $scope.hospital = getSelectedHospital(selectedHospital, hospitals);
-        $scope.asof = (selectedAsof) ? selectedAsof : $filter('date')(new Date(), "yyyy/MM/dd");
+        $scope.asof = (selectedAsof) ? new Date(selectedAsof) : new Date();
         $scope.backorder_flag = false;
 
         $scope.ok = function(asof, qty, hospital, backorder_flag) {
@@ -202,7 +202,7 @@ myApp.controller('inventoryController',
             var comment = (backorder_flag) ? 'B/O' : null;
             $cookies.put('hospital', hospital);
             $cookies.put('asofDeliver', asof);
-            DataService.insertInventory(inv, asof, inv.bead, qty, hospital, comment);
+            DataService.insertInventory(inv,  $filter('date')(asof, "yyyy/MM/dd"), inv.bead, qty, hospital, comment);
             $mdDialog.hide();
           }
         }

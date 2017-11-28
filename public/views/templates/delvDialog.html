@@ -2,11 +2,11 @@
   <h4>Deliver to Hospitals: {{selectedBead}}<span ng-show="showBackorder"><br>(for Backorder)</span></h4>
   <br>
   <md-content layout-padding layout="column" style="max-width:800px;max-height:810px;">
-    
+
     <div id="mediumDiv">
       <div class="form-group">
-        <label for="asof">Date (yyyy/mm/dd):</label>
-        <input class="form-control" type="text" ng-model="asof">
+        <label for="asof">Date (yyyy/mm/dd):</label><br>
+        <md-datepicker ng-model="asof"></md-datepicker>
       </div>
 
       <label>Hospital:</label>

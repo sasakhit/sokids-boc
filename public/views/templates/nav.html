@@ -1,14 +1,14 @@
-<nav class="container-fluid navbar-default navbar-fixed-top">
-  <ul class="nav nav-tabs">
-    <li><a href="#dashboard">Inventory</a></li>
-    <li><a href="#hospitals">Hospitals</a></li>
-    <li><a href="#beads">Beads</a></li>
-    <li><a href="#transaction_histrory">Transaction History</a></li>
-    <li><a href="#order_histrory">Order History</a></li>
-    <li>
+<div ng-controller="navController" ng-app="myApp" ng-cloak>
+  <md-nav-bar md-selected-nav-item="currentNavItem" nav-bar-aria-label="navigation links">
+    <md-nav-item md-nav-href="#dashboard" name="dashboard">Inventory</md-nav-item>
+    <md-nav-item md-nav-href="#hospitals" name="hospitals">Hospitals</md-nav-item>
+    <md-nav-item md-nav-href="#beads" name="beads">Beads</md-nav-item>
+    <md-nav-item md-nav-href="#transaction_histrory" name="transaction_histrory">Transaction History</md-nav-item>
+    <md-nav-item md-nav-href="#order_histrory" name="order_histrory">Order History</md-nav-item>
+
       <form action="/logout" method="get" class="board-form">
         <button class="btn btn-danger" type="submit">Logout</button>
       </form>
-    </li>
-  </ul>
-</nav>
+
+  </md-nav-bar>
+</div>

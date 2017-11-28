@@ -1,7 +1,8 @@
-# shine on kids Site
+# Code for Change - Shine On! Kids
 
-this is the C4C2.0 project for NGO [Shine On! Kids](http://sokids.org/).
+This is the Code for Change 2017 project for Shine On! Kids (http://sokids.org/).
 
-current objectives:
-* remake of current website
-* inventory system for program beads of courage
+Scope of Work:
+* Enhancement of existing Beads Inventory Application
+* Hospital Screen
+* Donor Management Screen

@@ -1,7 +1,8 @@
 var myApp = angular.module('myApp',
   ['ngRoute', 'ngAnimate', 'ui.bootstrap', 'ngTagsInput' , 'ngMaterial', 'ngCookies']);
 
-myApp.config(['$routeProvider', function($routeProvider) {
+myApp.config(['$routeProvider', '$mdThemingProvider', '$mdDateLocaleProvider', function($routeProvider, $mdThemingProvider, $mdDateLocaleProvider) {
+
 
   $routeProvider
     .when('/dashboard', {
@@ -30,4 +31,18 @@ myApp.config(['$routeProvider', function($routeProvider) {
     .otherwise({
       redirectTo: '/dashboard'
     });
+
+    $mdThemingProvider.theme('default')
+      .primaryPalette('indigo')
+      .accentPalette('pink')
+      .warnPalette('green')
+      .backgroundPalette('grey');
+
+    $mdDateLocaleProvider.formatDate = function(date) {
+      return moment(date).format('YYYY/MM/DD');
+    };
+}]);
+
+myApp.controller('navController', ['$scope', '$location', function($scope, $location) {
+  $scope.currentNavItem = $location.path().replace('/','');
 }]);

@@ -68,14 +68,14 @@ myApp.controller('transactionHistoryController',
       function dialogController($scope, $mdDialog, names, parties, inv) {
         $scope.names = names;
         $scope.parties = parties;
-        $scope.asof = inv.asof;
+        $scope.asof = new Date(inv.asof);
         $scope.name = inv.name;
         $scope.qty = inv.qty;
         $scope.party = inv.party;
         $scope.comment = inv.comment;
 
         $scope.ok = function(asof, name, qty, party, comment) {
-          DataService.updateInventory(inv, asof, name, qty, party, comment);
+          DataService.updateInventory(inv, $filter('date')(asof, "yyyy/MM/dd"), name, qty, party, comment);
           $mdDialog.hide();
         }
 
@@ -126,7 +126,8 @@ myApp.controller('transactionHistoryController',
         $scope.lotsize = inv.lotsize;
         $scope.showBracket = inv.showBracket;
         $scope.showBackorder = inv.showBackorder;
-        $scope.asof = $filter('date')(new Date(), "yyyy/MM/dd");
+        //$scope.asof = $filter('date')(new Date(), "yyyy/MM/dd");
+        $scope.asof = new Date();
 
         $scope.ok = function(asof, qty, hospital) {
           if (qty < 0) {
@@ -138,11 +139,11 @@ myApp.controller('transactionHistoryController',
           else {
             if (qty < orig_qty) {
               var remaining_qty = -1 * (orig_qty - qty)
-              DataService.insertInventory(inv, inv.asof, inv.name, remaining_qty, hospital, 'B/O');
+              DataService.insertInventory(inv, $filter('date')(inv.asof, "yyyy/MM/dd"), inv.name, remaining_qty, hospital, 'B/O');
             }
             qty = -1* qty;
-            DataService.updateInventory(inv, inv.asof, inv.name, qty, hospital, 'B/O [Delivered]');
-            DataService.insertInventory(inv, asof, inv.name, qty, hospital, 'Deliver for B/O', inv.id);
+            DataService.updateInventory(inv, $filter('date')(inv.asof, "yyyy/MM/dd"), inv.name, qty, hospital, 'B/O [Delivered]');
+            DataService.insertInventory(inv, $filter('date')(asof, "yyyy/MM/dd"), inv.name, qty, hospital, 'Deliver for B/O', inv.id);
             $mdDialog.hide();
           }
         }
