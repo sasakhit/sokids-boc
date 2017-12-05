@@ -175,10 +175,10 @@ myApp.factory('DataService',
         return deferred.promise;
       }
 
-      function insertBead(name, type, lotsize, price, name_jp, description, id, id_chronic) {
+      function insertBead(name, type, lotsize, price, name_jp, description, refno, refno_chronic) {
         var deferred = $q.defer();
 
-        $http.post('/beads', {name:name, type:type, lotsize:lotsize, price:price, name_jp:name_jp, description:description, id:id, id_chronic:id_chronic})
+        $http.post('/beads', {name:name, type:type, lotsize:lotsize, price:price, name_jp:name_jp, description:description, refno:refno, refno_chronic:refno_chronic})
           .success(function (data, status) {
             if (status === 200 ) {
               deferred.resolve();
@@ -196,10 +196,10 @@ myApp.factory('DataService',
         return deferred.promise;
       }
 
-      function updateBead(name, type, lotsize, price, name_jp, description, id, id_chronic) {
+      function updateBead(id, name, type, lotsize, price, name_jp, description, refno, refno_chronic) {
         var deferred = $q.defer();
 
-        $http.put('/beads', {name:name, type:type, lotsize:lotsize, price:price, name_jp:name_jp, description:description, id:id, id_chronic:id_chronic})
+        $http.put('/beads', {id:id, name:name, type:type, lotsize:lotsize, price:price, name_jp:name_jp, description:description, refno:refno, refno_chronic:refno_chronic})
           .success(function (data, status) {
             if (status === 200 ) {
               deferred.resolve();
@@ -217,10 +217,10 @@ myApp.factory('DataService',
         return deferred.promise;
       }
 
-      function deleteBead(name) {
+      function deleteBead(id) {
         var deferred = $q.defer();
 
-        $http.put('/beads/delete', {name: name})
+        $http.put('/beads/delete', {id: id})
           .success(function (data, status) {
             if (status === 200 ) {
               deferred.resolve();

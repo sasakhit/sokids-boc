@@ -18,7 +18,7 @@ myApp.controller('inventoryController',
         rawData = data;
 
         var dates = _.sortBy(_.uniq(_.map(rawData, function(data) { return data.asof; }))).reverse();
-        var beads = _.uniq(_.map(rawData, function(data){ return {'name':data.name, 'type':data.type, 'name_jp':data.name_jp, 'lotsize':data.lotsize, 'id':data.id, 'id_chronic':data.id_chronic}; }), 'name');
+        var beads = _.uniq(_.map(rawData, function(data){ return {'name':data.name, 'type':data.type, 'name_jp':data.name_jp, 'lotsize':data.lotsize, 'refno':data.refno, 'refno_chronic':data.refno_chronic}; }), 'name');
         var types = _.uniq(_.map(rawData, function(data) { return data.type; }));
         $scope.typesForFilter = DataService.getTypesForFilter(types);
 
@@ -41,8 +41,8 @@ myApp.controller('inventoryController',
           inv["type"] = beads[k].type;
           inv["bead_jp"] = beads[k].name_jp;
           inv["lotsize"] = beads[k].lotsize;
-          inv["id"] = beads[k].id;
-          inv["id_chronic"] = beads[k].id_chronic;
+          inv["refno"] = beads[k].refno;
+          inv["refno_chronic"] = beads[k].refno_chronic;
           var total = 0;
           var unreceived_total = 0;
           var backorder_total = 0;

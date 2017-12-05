@@ -392,3 +392,35 @@ INSERT INTO inventory(asof, name, qty, party)
 VALUES(current_date-8,'8 Bead',80,'Initialize');
 INSERT INTO inventory(asof, name, qty, party)
 VALUES(current_date-8,'9 Bead',100,'Initialize');
+
+
+SELECT
+  i.name,
+  SUM(CASE WHEN i.party = 'Order' OR i.comment like 'B/O%' THEN 0 ELSE i.qty END) stock_qty,
+  SUM(CASE WHEN i.party = 'Order' THEN i.qty WHEN i.party = 'Receive' THEN -1 * i.qty ELSE 0 END) unreceived_qty,
+  SUM(CASE WHEN i.comment like 'B/O%' THEN i.qty WHEN i.comment = 'Deliver for B/O' THEN -1 * i.qty ELSE 0 END) backorder_qty
+INTO TEMP tmp_inventory
+FROM inventory i
+GROUP BY i.name
+
+UPDATE beads
+SET stock_qty = i.stock_qty, unreceived_qty = i.unreceived_qty, backorder_qty = i.backorder_qty
+FROM beads b, tmp_inventory i
+ON i.name = b.name
+
+DROP TABLE tmp_inventory
+
+INSERT INTO transactions (asof, type, qty, bead_id, hospital_id)
+SELECT
+  i.asof,
+  CASE WHEN i.party = 'Initialize' THEN 'INITIALIZE'
+       WHEN i.party = 'Order' THEN 'ORDER_TO_SUPPLIER'
+       WHEN i.party = 'Receive' THEN 'RECEIVE_FROM_SUPPLIER'
+       WHEN i.comment = 'B/O' THEN 'BACKORDER_FOR_HOSPITAL'
+       WHEN i.comment = 'Deliver for B/O' THEN 'DELIVER_FOR_BACKORDER'
+       ELSE 'DELIVER_TO_HOSTPITAL' END,
+  qty,
+  b.id,
+  h.id
+FROM ( inventory i INNER JOIN beads b ON i.name = b.name )
+  LEFT OUTER JOIN hospitals h ON i.party = h.name
