@@ -2,13 +2,14 @@
 
 This is the Code for Change 2017 project for Shine On! Kids (http://sokids.org/).
 
-Scope of Work:
+#### Scope of Work:
 
 **Enhancement of the current Beads Inventory Application (Platform: Web)​**
 * Order Sheet​
   * Generate order sheet with # of orders automatically. SOK puts # of orders in the order sheet manually now. The sheet is used by Volunteers to pack beads and track back-orders​
 * Delivery Sheet​
   * Generate delivery sheet automatically. SOK does not attach the delivery sheet to hospital now
+
 
 **Beads Order Screen for Hospitals (Platform: Web)**
 * Beads Order Screen​
@@ -18,6 +19,7 @@ Scope of Work:
 * “Beads of Courage” Activities Tracking Screen​
   * Create a screen to track “Beads of Courage” activities - how many patients (without name) participate in this program, and duration etc.​
 
+  
 **Donors Management Tool (Platform: Web)​**
 * Confirmation Mail​
   * Send a confirmation mail when “Team Beads of Courage” registration is done. Google Form is now used for registration. Donors sometimes register multiple times by mistake, because no confirmation is sent​
