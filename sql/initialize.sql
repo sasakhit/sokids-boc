@@ -398,29 +398,32 @@ SELECT
   i.name,
   SUM(CASE WHEN i.party = 'Order' OR i.comment like 'B/O%' THEN 0 ELSE i.qty END) stock_qty,
   SUM(CASE WHEN i.party = 'Order' THEN i.qty WHEN i.party = 'Receive' THEN -1 * i.qty ELSE 0 END) unreceived_qty,
-  SUM(CASE WHEN i.comment like 'B/O%' THEN i.qty WHEN i.comment = 'Deliver for B/O' THEN -1 * i.qty ELSE 0 END) backorder_qty
+  SUM(CASE WHEN i.comment like 'B/O%' THEN i.qty WHEN i.comment = 'Deliver for B/O' THEN -1 * i.qty ELSE 0 END) undelivered_qty
 INTO TEMP tmp_inventory
 FROM inventory i
 GROUP BY i.name
 
-UPDATE beads
-SET stock_qty = i.stock_qty, unreceived_qty = i.unreceived_qty, backorder_qty = i.backorder_qty
-FROM beads b, tmp_inventory i
-ON i.name = b.name
+UPDATE beads b
+SET stock_qty = i.stock_qty, unreceived_qty = i.unreceived_qty, undelivered_qty = i.undelivered_qty
+FROM tmp_inventory i
+WHERE i.name = b.name
 
 DROP TABLE tmp_inventory
 
-INSERT INTO transactions (asof, type, qty, bead_id, hospital_id)
+INSERT INTO transactions (asof, type, qty, open_qty, bead_id, hospital_id, linkid, status)
 SELECT
   i.asof,
   CASE WHEN i.party = 'Initialize' THEN 'INITIALIZE'
        WHEN i.party = 'Order' THEN 'ORDER_TO_SUPPLIER'
        WHEN i.party = 'Receive' THEN 'RECEIVE_FROM_SUPPLIER'
-       WHEN i.comment = 'B/O' THEN 'BACKORDER_FOR_HOSPITAL'
-       WHEN i.comment = 'Deliver for B/O' THEN 'DELIVER_FOR_BACKORDER'
+       WHEN i.comment = 'B/O' THEN 'ORDER_FROM_HOSPITAL'
+       WHEN i.comment = 'Deliver for B/O' THEN 'DELIVER_TO_HOSPITAL'
        ELSE 'DELIVER_TO_HOSTPITAL' END,
   qty,
+  CASE WHEN i.comment = 'B/O' THEN qty ELSE 0 END, -- open_qty
   b.id,
-  h.id
+  h.id,
+  NULL, -- linkid
+  CASE WHEN i.comment = 'B/O' THEN 'OPEN' ELSE 'DONE' END -- status
 FROM ( inventory i INNER JOIN beads b ON i.name = b.name )
   LEFT OUTER JOIN hospitals h ON i.party = h.name

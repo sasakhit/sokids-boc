@@ -14,10 +14,13 @@
           </th>
           <th class="col-md-1 col-sm-1 col-xs-1">Bead Type</th>
           <th class="col-md-1 col-sm-1 col-xs-1">Reference<br>(Chronic)</th>
-          <th class="col-md-3 col-sm-3 col-xs-3">Bead Name<br>Bead Name (JP)</th>
-          <th class="col-md-4 col-sm-4 col-xs-4">Description</th>
+          <th class="col-md-2 col-sm-2 col-xs-2">Bead Name<br>Bead Name (JP)</th>
+          <th class="col-md-3 col-sm-3 col-xs-3">Description</th>
           <th class="col-md-1 col-sm-1 hidden-xs">Lot Size</th>
           <th class="col-md-1 col-sm-1 hidden-xs">Price ($)</th>
+          <th class="col-md-1 col-sm-1 hidden-xs">Stock<br>Qty</th>
+          <th class="col-md-1 col-sm-1 hidden-xs">Unreceived<br>Qty</th>
+          <th class="col-md-1 col-sm-1 hidden-xs">Undelivered<br>Qty</th>
         </tr>
       </thead>
       <tbody ng-repeat="bead in beads | filter : typeFilter ">
@@ -30,6 +33,9 @@
           <td>{{bead.description}}</td>
           <td class="hidden-xs">{{bead.lotsize}}</td>
           <td class="hidden-xs">{{bead.price}}</td>
+          <td class="hidden-xs">{{bead.stock_qty}}</td>
+          <td class="hidden-xs">{{bead.unreceived_qty}}</td>
+          <td class="hidden-xs">{{bead.undelivered_qty}}</td>
         </tr>
       </tbody>
     </table>

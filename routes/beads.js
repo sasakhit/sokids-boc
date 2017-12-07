@@ -11,7 +11,7 @@ var pgp = require('pg-promise')(options);
 router.get('/',  function(req, res) {
 
   var results = [];
-  var sql = "SELECT id, name, type, lotsize, price, name_jp, description, refno, refno_chronic, stock_qty, unreceived_qty, order_qty, backorder_qty FROM beads "
+  var sql = "SELECT id, name, type, lotsize, price, name_jp, description, refno, refno_chronic, stock_qty, unreceived_qty, undelivered_qty FROM beads "
           + "ORDER BY CASE WHEN type = 'Process' THEN 1 "
           + "              WHEN type = 'Special' THEN 2 "
           + "              WHEN type = 'Alphabet' THEN 7 "

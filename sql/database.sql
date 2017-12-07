@@ -7,7 +7,7 @@ DROP TABLE users;
 CREATE TABLE hospitals
      (
      id serial,
-     name character varying(100) NOT NULL UNIQUE,
+     name character varying(100) NOT NULL,
      postal character varying(10),
      address character varying(100),
      phone character varying(50),
@@ -23,22 +23,19 @@ CREATE TABLE hospitals
 CREATE TABLE beads
      (
      id serial,
-     name character varying(100) NOT NULL UNIQUE,
+     name character varying(100) NOT NULL,
      type character varying(50) NOT NULL,
      lotsize integer,
      price integer,
      name_jp character varying(100),
      description character varying(100),
-     refno integer,          -- reference no
-     refno_chronic integer,  -- reference no for chronic
-     stock_qty integer,      -- Current stock
+     refno integer,           -- reference no
+     refno_chronic integer,   -- reference no for chronic
+     stock_qty integer,       -- Current stock
      unreceived_qty integer,  -- Sent order but unreceived from Beads of Courage
-     order_qty integer,      -- Receive order by undelivered to hospitals
-     backorder_qty integer   -- Backorder for hospitals
+     undelivered_qty integer  -- Receive order by undelivered to hospitals
      );
 
--- ALTER TABLE beads ADD COLUMN refno integer;
--- ALTER TABLE beads ADD COLUMN refno_chronic integer;
 
 CREATE TABLE transactions
      (
@@ -46,14 +43,17 @@ CREATE TABLE transactions
      asof date NOT NULL,
      type character varying(30) NOT NULL,
      qty integer NOT NULL,
+     open_qty integer,       -- decrease open_qty if received/delivered
      bead_id integer NOT NULL,
      hospital_id integer,
      linkid integer,
+     status character varying(5),
      timestamp timestamp NOT NULL default CURRENT_TIMESTAMP
      );
 
 CREATE INDEX idx_bead ON transactions (bead_id);
 CREATE INDEX idx_hospital ON transactions (hospital_id);
+CREATE INDEX idx_status ON transactions (status);
 
 CREATE TABLE inventory
      (
