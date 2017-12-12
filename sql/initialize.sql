@@ -420,10 +420,10 @@ SELECT
        WHEN i.comment = 'Deliver for B/O' THEN 'DELIVER_TO_HOSPITAL'
        ELSE 'DELIVER_TO_HOSTPITAL' END,
   qty,
-  CASE WHEN i.comment = 'B/O' THEN qty ELSE 0 END, -- open_qty
+  CASE WHEN i.comment = 'B/O' THEN qty ELSE null END, -- open_qty
   b.id,
   h.id,
   NULL, -- linkid
-  CASE WHEN i.comment = 'B/O' THEN 'OPEN' ELSE 'DONE' END -- status
+  CASE WHEN i.comment = 'B/O' THEN 'DELIVER' ELSE 'DONE' END -- status
 FROM ( inventory i INNER JOIN beads b ON i.name = b.name )
   LEFT OUTER JOIN hospitals h ON i.party = h.name

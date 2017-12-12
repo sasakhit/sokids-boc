@@ -3,6 +3,10 @@ myApp.factory('DataService',
     function($http, $mdDialog, $q, $route) {
 
       return {
+        getTransactions : getTransactions,
+        insertTransaction : insertTransaction,
+        updateTransaction : updateTransaction,
+        deleteTransaction : deleteTransaction,
         getInventorySummary : getInventorySummary,
         getInventoryOrders : getInventoryOrders,
         getInventoryDetails : getInventoryDetails,
@@ -11,7 +15,10 @@ myApp.factory('DataService',
         getHospitals : getHospitals,
         getParties : getParties,
         getHospitalsForFilter : getHospitalsForFilter,
+        getHospitalsForFilterHash : getHospitalsForFilterHash,
         isFilteredByHospital : isFilteredByHospital,
+        isFilteredByHospitalHash : isFilteredByHospitalHash,
+        isFilteredByType : isFilteredByType,
         getBracketType : getBracketType,
         getTotalType : getTotalType,
         insertInventory : insertInventory,
@@ -24,6 +31,75 @@ myApp.factory('DataService',
         updateHospital : updateHospital,
         deleteHospital : deleteHospital
       };
+
+      function getTransactions() {
+        return $http.get('/transactions').then(function(response) {
+          return response.data;
+        });
+      }
+
+      function insertTransaction(asof, type, hospital_id, bead_id, qty, open_qty, status, linkid = null) {
+        var deferred = $q.defer();
+
+        $http.post('/transactions', {asof:asof, type:type, hospital_id:hospital_id, bead_id:bead_id, qty:qty, open_qty:open_qty, status:status, linkid:linkid})
+          .success(function (data, status) {
+            if(status === 200 ){
+              deferred.resolve();
+            } else {
+              deferred.reject();
+            }
+          })
+          .error(function (data) {
+            deferred.reject();
+          })
+          .finally(function () {
+            $route.reload();
+          });
+
+        return deferred.promise;
+      }
+
+      function updateTransaction(id, asof, hospital_id, bead_id, qty, open_qty = null, status = null) {
+        var deferred = $q.defer();
+
+        $http.put('/transactions/update', {id:id, asof:asof, hospital_id:hospital_id, bead_id:bead_id, qty:qty, open_qty:open_qty, status:status})
+          .success(function (data, status) {
+            if(status === 200 ){
+              deferred.resolve();
+            } else {
+              deferred.reject();
+            }
+          })
+          .error(function (data) {
+            deferred.reject();
+          })
+          .finally(function () {
+            $route.reload();
+          });
+
+        return deferred.promise;
+      }
+
+      function deleteTransaction(id) {
+        var deferred = $q.defer();
+
+        $http.put('/transactions/delete', {id: id})
+          .success(function (data, status) {
+            if(status === 200 ){
+              deferred.resolve();
+            } else {
+              deferred.reject();
+            }
+          })
+          .error(function (data) {
+            deferred.reject();
+          })
+          .finally(function () {
+            $route.reload();
+          });
+
+        return deferred.promise;
+      }
 
       function getInventorySummary() {
         return $http.get('/dashboard/summary').then(function(response) {
@@ -74,8 +150,23 @@ myApp.factory('DataService',
         return hospitals;
       }
 
+      function getHospitalsForFilterHash(hospitals) {
+        for (var hospital of [{'id':0, 'name':'All'}]) {
+          hospitals.unshift(hospital);
+        }
+        return hospitals;
+      }
+
       function isFilteredByHospital(selectedHospital, hospital) {
         if (! selectedHospital || selectedHospital == 'All' || selectedHospital == '') {
+          return true;
+        } else {
+          return hospital == selectedHospital;
+        }
+      }
+
+      function isFilteredByHospitalHash(selectedHospital, hospital) {
+        if (! selectedHospital || selectedHospital.name == 'All' || selectedHospital.name == '') {
           return true;
         } else {
           return hospital == selectedHospital;
@@ -196,10 +287,11 @@ myApp.factory('DataService',
         return deferred.promise;
       }
 
-      function updateBead(id, name, type, lotsize, price, name_jp, description, refno, refno_chronic) {
+      function updateBead(id, name, type, lotsize, price, name_jp, description, refno, refno_chronic, stock_qty = null, unreceived_qty = null, undelivered_qty = null) {
         var deferred = $q.defer();
 
-        $http.put('/beads', {id:id, name:name, type:type, lotsize:lotsize, price:price, name_jp:name_jp, description:description, refno:refno, refno_chronic:refno_chronic})
+        $http.put('/beads', {id:id, name:name, type:type, lotsize:lotsize, price:price, name_jp:name_jp, description:description,
+                             refno:refno, refno_chronic:refno_chronic, stock_qty:stock_qty, unreceived_qty:unreceived_qty, undelivered_qty:undelivered_qty})
           .success(function (data, status) {
             if (status === 200 ) {
               deferred.resolve();

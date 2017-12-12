@@ -1,0 +1,38 @@
+<md-dialog aria-label="Edit Transaction">
+  <md-toolbar class="md-primary">
+      <div class="md-toolbar-tools">
+        <h2>Edit Transaction</h2>
+      </div>
+  </md-toolbar>
+
+  <md-content layout-padding layout="column" style="max-width:100%; max-height:100%;">
+
+    <div id="mediumDiv">
+      <div class="form-group">
+        <label for="asof">Date (yyyy/mm/dd):</label><br>
+        <md-datepicker ng-model="asof"></md-datepicker>
+      </div>
+
+      <label>Hospital:</label>
+      <md-select ng-model="hospital" aria-label="Hospital:" ng-model-options="{trackBy: '$value.id'}">
+         <md-option ng-value="hospital" ng-repeat="hospital in hospitals">{{hospital.name}}</md-option>
+      </md-select>
+
+      <label>Bead:</label>
+      <md-select ng-model="bead" aria-label="Bead:" ng-model-options="{trackBy: '$value.id'}">
+         <md-option ng-value="bead" ng-repeat="bead in beads">{{bead.name}}</md-option>
+      </md-select>
+
+      <div class="form-group">
+        <label for="qty">Qty:</label>
+        <input class="form-control" type="number" ng-model="qty">
+      </div>
+    </div>
+
+    <md-dialog-actions>
+      <md-button class="md-warn md-raised" style="background-color:red" ng-click="delete()">Delete</md-button>
+      <md-button class="md-warn md-raised" ng-click="cancel()">Cancel</md-button>
+      <md-button class="md-primary md-raised" ng-click="ok(asof, hospital, bead, qty);">Update</md-button>
+    </md-dialog-actions>
+  </md-content>
+</md-dialog>

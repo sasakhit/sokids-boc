@@ -17,6 +17,10 @@ myApp.config(['$routeProvider', '$mdThemingProvider', '$mdDateLocaleProvider', f
       templateUrl: '/views/templates/beads.html',
       controller: 'beadsController'
     })
+    .when('/transactions', {
+      templateUrl: '/views/templates/transactions.html',
+      controller: 'transactionsController'
+    })
     .when('/transaction_histrory', {
       templateUrl: '/views/templates/transactionHistory.html',
       controller: 'transactionHistoryController'

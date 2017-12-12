@@ -34,6 +34,21 @@ router.get('/',  function(req, res) {
 });
 
 router.put('/',  function(req, res) {
+  var results = [];
+  var sql = "UPDATE beads "
+          + "SET name = COALESCE($1, name), "
+          + "    type = COALESCE($2, type), "
+          + "    lotsize = COALESCE($3, lotsize), "
+          + "    price = COALESCE($4, price), "
+          + "    name_jp = COALESCE($5, name_jp), "
+          + "    description = COALESCE($6, description), "
+          + "    refno = COALESCE($7, refno), "
+          + "    refno_chronic = COALESCE($8, refno_chronic), "
+          + "    stock_qty = COALESCE($9, stock_qty), "
+          + "    unreceived_qty = COALESCE($10, unreceived_qty), "
+          + "    undelivered_qty = COALESCE($11, undelivered_qty) "
+          + "WHERE id = $12";
+
   var updBead = {
     id: req.body.id,
     name: req.body.name,
@@ -43,13 +58,15 @@ router.put('/',  function(req, res) {
     name_jp: req.body.name_jp,
     description: req.body.description,
     refno: req.body.refno,
-    refno_chronic: req.body.refno_chronic
+    refno_chronic: req.body.refno_chronic,
+    stock_qty: req.body.stock_qty,
+    unreceived_qty: req.body.unreceived_qty,
+    undelivered_qty: req.body.undelivered_qty
   };
 
-  var results = [];
-
-  connection.result("UPDATE beads SET name = $1, type = $2, lotsize = $3, price = $4, name_jp = $5, description = $6, refno = $7, refno_chronic = $8 WHERE id = $9",
-    [updBead.name, updBead.type, updBead.lotsize, updBead.price, updBead.name_jp, updBead.description, updBead.refno, updBead.refno_chronic, updBead.id])
+  connection.result(sql,
+    [updBead.name, updBead.type, updBead.lotsize, updBead.price, updBead.name_jp, updBead.description, updBead.refno, updBead.refno_chronic,
+     updBead.stock_qty, updBead.unreceived_qty, updBead.undelivered_qty, updBead.id])
       .then(function (data) {
       })
       .catch(function (error) {

@@ -1,6 +1,6 @@
 myApp.controller('beadsController',
-  ['$rootScope', '$scope', '$route', '$log', '$mdDialog', 'LoginService', 'DataService', 'Utils',
-  function($rootScope, $scope, $route, $log, $mdDialog, LoginService, DataService, Utils) {
+  ['$rootScope', '$scope', '$route', '$log', '$mdDialog', '$cookies', '$filter', 'LoginService', 'DataService', 'Utils', 'TranType', 'TranStatus',
+  function($rootScope, $scope, $route, $log, $mdDialog, $cookies, $filter, LoginService, DataService, Utils, TranType, TranStatus) {
 
     LoginService.loginCheck();
     getBeads();
@@ -21,10 +21,55 @@ myApp.controller('beadsController',
           $scope.selectedType = $rootScope.selectedType;
         }
 
-        $scope.typeFilter = function(inv) {
-          return DataService.isFilteredByHospital($scope.selectedType, inv.type);
+        $scope.typeFilter = function(bead) {
+          return DataService.isFilteredByType($scope.selectedType, bead.type);
         };
       });
+    }
+
+    $scope.orderBead = function(ev, bead) {
+      function dialogController($scope, $mdDialog, selectedAsof, bead) {
+        $scope.selectedBead = bead.name;
+        $scope.lotsize = bead.lotsize;
+        $scope.asof = (selectedAsof) ? new Date(selectedAsof) : new Date();
+
+        $scope.ok = function(asof, qty) {
+          $cookies.put('asofOrder', asof);
+          var type = TranType.ORDER_TO_SUPPLIER;
+          var hospital_id = 0;
+          var status = TranType.getTranStatus(type);
+          DataService.insertTransaction($filter('date')(asof, "yyyy/MM/dd"), type, hospital_id, bead.id, qty, qty, status);
+          var unreceived_qty = bead.unreceived_qty + qty;
+          DataService.updateBead(bead.id, null, null, null, null, null, null, null, null, null, unreceived_qty, null);
+          $mdDialog.hide();
+        }
+
+        $scope.cancel = function() {
+          $mdDialog.hide();
+        }
+      }
+
+      $mdDialog.show({
+        controller: dialogController,
+        targetEvent: ev,
+        ariaLabel:  'Order',
+        clickOutsideToClose: true,
+        templateUrl: 'views/templates/orderBead.html',
+        onComplete: afterShowAnimation,
+        size: 'large',
+        bindToController: true,
+        autoWrap: false,
+        parent: angular.element(document.body),
+        preserveScope: true,
+        locals: {
+          selectedAsof: $cookies.get('asofOrder'),
+          bead: bead
+        }
+      });
+
+      function afterShowAnimation(scope, element, options) {
+         // post-show code here: DOM element focus, etc.
+      }
     }
 
     $scope.editBead = function(ev, bead) {

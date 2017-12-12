@@ -47,7 +47,7 @@ CREATE TABLE transactions
      bead_id integer NOT NULL,
      hospital_id integer,
      linkid integer,
-     status character varying(5),
+     status character varying(10),
      timestamp timestamp NOT NULL default CURRENT_TIMESTAMP
      );
 
