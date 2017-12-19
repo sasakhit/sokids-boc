@@ -4,7 +4,7 @@
     <table class="table table-hover table-condensed">
       <thead>
         <tr>
-          <th colspan="2" class="col-md-2 col-sm-2 hidden-xs">
+          <th colspan="3" class="col-md-2 col-sm-2 hidden-xs">
             <md-input-container>
               <label>Bead Type</label>
                 <md-select ng-model="selectedType">
@@ -13,23 +13,35 @@
             </md-input-container>
           </th>
           <th class="col-md-1 col-sm-1 col-xs-1">Bead Type</th>
-          <th class="col-md-1 col-sm-1 col-xs-1">ID<br>(Chronic)</th>
-          <th class="col-md-3 col-sm-3 col-xs-3">Bead Name<br>Bead Name (JP)</th>
-          <th class="col-md-4 col-sm-4 col-xs-4">Description</th>
+          <th class="col-md-1 col-sm-1 col-xs-1">Reference<br>(Chronic)</th>
+          <th class="col-md-2 col-sm-2 col-xs-2">Bead Name<br>Bead Name (JP)</th>
+          <th class="col-md-3 col-sm-3 col-xs-3">Description</th>
           <th class="col-md-1 col-sm-1 hidden-xs">Lot Size</th>
           <th class="col-md-1 col-sm-1 hidden-xs">Price ($)</th>
+          <th class="col-md-1 col-sm-1 hidden-xs">Stock<br>Qty</th>
+          <th class="col-md-1 col-sm-1 hidden-xs">Unreceived<br>Qty</th>
+          <th class="col-md-1 col-sm-1 hidden-xs">Undelivered<br>Qty</th>
         </tr>
       </thead>
       <tbody ng-repeat="bead in beads | filter : typeFilter ">
         <tr>
-          <td class="hidden-xs"><button class="btn btn-primary" ng-click="editBead($event, bead)">Edit</button></td>
-          <td class="hidden-xs"><img src="images/{{bead.name}}.jpg" width="60px" height="60px"></td>
+          <td class="hidden-xs"><button class="btn btn-danger btn-sm" ng-click="orderBead($event, bead)">Order</button></td>
+          <td class="hidden-xs"><button class="btn btn-primary btn-sm" ng-click="editBead($event, bead)">Edit</button></td>
+          <!-- td>
+            <md-button class="md-fab md-mini" aria-label="Order to Supplier">
+              <md-icon md-svg-src="images/icons/shopping_cart_white.svg"></md-icon>
+            </md-button>
+          </td -->
+          <td class="hidden-xs"><img ng-src="images/{{bead.name}}.jpg" on-error-src="images/error.png" width="50px" height="50px"></td>
           <td>{{bead.type}}</td>
-          <td>{{bead.id}}<br><span ng-show="bead.id_chronic">({{bead.id_chronic}})</span></td>
+          <td>{{bead.refno}}<br><span ng-show="bead.refno_chronic">({{bead.refno_chronic}})</span></td>
           <td>{{bead.name}}<br>{{bead.name_jp}}</td>
           <td>{{bead.description}}</td>
           <td class="hidden-xs">{{bead.lotsize}}</td>
           <td class="hidden-xs">{{bead.price}}</td>
+          <td class="hidden-xs">{{bead.stock_qty}}</td>
+          <td class="hidden-xs">{{bead.unreceived_qty}}</td>
+          <td class="hidden-xs">{{bead.undelivered_qty}}</td>
         </tr>
       </tbody>
     </table>

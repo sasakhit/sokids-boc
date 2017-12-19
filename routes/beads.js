@@ -11,14 +11,14 @@ var pgp = require('pg-promise')(options);
 router.get('/',  function(req, res) {
 
   var results = [];
-  var sql = "SELECT name, type, lotsize, price, name_jp, description, id, id_chronic FROM beads "
+  var sql = "SELECT id, name, type, lotsize, price, name_jp, description, refno, refno_chronic, stock_qty, unreceived_qty, undelivered_qty FROM beads "
           + "ORDER BY CASE WHEN type = 'Process' THEN 1 "
           + "              WHEN type = 'Special' THEN 2 "
           + "              WHEN type = 'Alphabet' THEN 7 "
           + "              WHEN type = 'Number' THEN 8 "
           + "              WHEN type = 'Discontinued' THEN 9 "
           + "              ELSE 5 END, "
-          + "type, id, name";
+          + "type, refno, name";
 
   connection.result(sql)
     .then(function (data) {
@@ -34,21 +34,39 @@ router.get('/',  function(req, res) {
 });
 
 router.put('/',  function(req, res) {
-  var newBead = {
+  var results = [];
+  var sql = "UPDATE beads "
+          + "SET name = COALESCE($1, name), "
+          + "    type = COALESCE($2, type), "
+          + "    lotsize = COALESCE($3, lotsize), "
+          + "    price = COALESCE($4, price), "
+          + "    name_jp = COALESCE($5, name_jp), "
+          + "    description = COALESCE($6, description), "
+          + "    refno = COALESCE($7, refno), "
+          + "    refno_chronic = COALESCE($8, refno_chronic), "
+          + "    stock_qty = COALESCE($9, stock_qty), "
+          + "    unreceived_qty = COALESCE($10, unreceived_qty), "
+          + "    undelivered_qty = COALESCE($11, undelivered_qty) "
+          + "WHERE id = $12";
+
+  var updBead = {
+    id: req.body.id,
     name: req.body.name,
     type: req.body.type,
     lotsize: req.body.lotsize,
     price: req.body.price,
     name_jp: req.body.name_jp,
     description: req.body.description,
-    id: req.body.id,
-    id_chronic: req.body.id_chronic
+    refno: req.body.refno,
+    refno_chronic: req.body.refno_chronic,
+    stock_qty: req.body.stock_qty,
+    unreceived_qty: req.body.unreceived_qty,
+    undelivered_qty: req.body.undelivered_qty
   };
 
-  var results = [];
-
-  connection.result("UPDATE beads SET type = $1, lotsize = $2, price = $3, name_jp = $4, description = $5, id = $6, id_chronic = $7 WHERE name = $8",
-    [newBead.type, newBead.lotsize, newBead.price, newBead.name_jp, newBead.description, newBead.id, newBead.id_chronic, newBead.name])
+  connection.result(sql,
+    [updBead.name, updBead.type, updBead.lotsize, updBead.price, updBead.name_jp, updBead.description, updBead.refno, updBead.refno_chronic,
+     updBead.stock_qty, updBead.unreceived_qty, updBead.undelivered_qty, updBead.id])
       .then(function (data) {
       })
       .catch(function (error) {
@@ -63,7 +81,7 @@ router.put('/',  function(req, res) {
 
 router.post('/',  function(req, res) {
   var results = [];
-  var sql = "INSERT INTO beads VALUES ($1, $2, $3, $4, $5, $6, $7, $8)";
+  var sql = "INSERT INTO beads (name, type, lotsize, price, name_jp, description, refno, refno_chronic) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)";
 
   var newBead = {
     name: req.body.name,
@@ -72,11 +90,11 @@ router.post('/',  function(req, res) {
     price: req.body.price,
     name_jp: req.body.name_jp,
     description: req.body.description,
-    id: req.body.id,
-    id_chronic: req.body.id_chronic
+    refno: req.body.refno,
+    refno_chronic: req.body.refno_chronic
   };
 
-  connection.result(sql, [newBead.name, newBead.type, newBead.lotsize, newBead.price, newBead.name_jp, newBead.description, newBead.id, newBead.id_chronic])
+  connection.result(sql, [newBead.name, newBead.type, newBead.lotsize, newBead.price, newBead.name_jp, newBead.description, newBead.refno, newBead.refno_chronic])
     .then(function (data) {
     })
     .catch(function (error) {
@@ -91,12 +109,12 @@ router.post('/',  function(req, res) {
 
 router.put('/delete',  function(req, res) {
   var results = [];
-  var sql = "DELETE FROM beads WHERE name = $1";
+  var sql = "DELETE FROM beads WHERE id = $1";
   var delBead = {
-    name: req.body.name
+    id: req.body.id
   };
 
-  connection.result(sql, [delBead.name])
+  connection.result(sql, [delBead.id])
     .then(function (data) {
     })
     .catch(function (error) {

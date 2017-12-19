@@ -1,6 +1,6 @@
 myApp.controller('beadsController',
-  ['$rootScope', '$scope', '$route', '$log', '$mdDialog', 'LoginService', 'DataService',
-  function($rootScope, $scope, $route, $log, $mdDialog, LoginService, DataService) {
+  ['$rootScope', '$scope', '$route', '$log', '$mdDialog', '$cookies', '$filter', 'LoginService', 'DataService', 'Utils', 'TranType', 'TranStatus',
+  function($rootScope, $scope, $route, $log, $mdDialog, $cookies, $filter, LoginService, DataService, Utils, TranType, TranStatus) {
 
     LoginService.loginCheck();
     getBeads();
@@ -21,30 +21,77 @@ myApp.controller('beadsController',
           $scope.selectedType = $rootScope.selectedType;
         }
 
-        $scope.typeFilter = function(inv) {
-          return DataService.isFilteredByHospital($scope.selectedType, inv.type);
+        $scope.typeFilter = function(bead) {
+          return DataService.isFilteredByType($scope.selectedType, bead.type);
         };
       });
     }
 
+    $scope.orderBead = function(ev, bead) {
+      function dialogController($scope, $mdDialog, selectedAsof, bead) {
+        $scope.selectedBead = bead.name;
+        $scope.lotsize = bead.lotsize;
+        $scope.asof = (selectedAsof) ? new Date(selectedAsof) : new Date();
+
+        $scope.ok = function(asof, qty) {
+          $cookies.put('asofOrder', asof);
+          var type = TranType.ORDER_TO_SUPPLIER;
+          var hospital_id = 0;
+          var status = TranType.getTranStatus(type);
+          DataService.insertTransaction($filter('date')(asof, "yyyy/MM/dd"), type, hospital_id, bead.id, qty, qty, status);
+          var unreceived_qty = bead.unreceived_qty + qty;
+          DataService.updateBead(bead.id, null, null, null, null, null, null, null, null, null, unreceived_qty, null);
+          $mdDialog.hide();
+        }
+
+        $scope.cancel = function() {
+          $mdDialog.hide();
+        }
+      }
+
+      $mdDialog.show({
+        controller: dialogController,
+        targetEvent: ev,
+        ariaLabel:  'Order',
+        clickOutsideToClose: true,
+        templateUrl: 'views/templates/orderBead.html',
+        onComplete: afterShowAnimation,
+        size: 'large',
+        bindToController: true,
+        autoWrap: false,
+        parent: angular.element(document.body),
+        preserveScope: true,
+        locals: {
+          selectedAsof: $cookies.get('asofOrder'),
+          bead: bead
+        }
+      });
+
+      function afterShowAnimation(scope, element, options) {
+         // post-show code here: DOM element focus, etc.
+      }
+    }
+
     $scope.editBead = function(ev, bead) {
-      function dialogController($scope, $mdDialog, types, name, type, lotsize, price, name_jp, description, id, id_chronic) {
+      function dialogController($scope, $mdDialog, types, id, name, type, lotsize, price, name_jp, description, refno, refno_chronic) {
         $scope.types = types;
+        $scope.id = id;
         $scope.name = name;
         $scope.type = type;
         $scope.lotsize = lotsize;
         $scope.price = price;
         $scope.name_jp = name_jp;
         $scope.description = description;
-        $scope.id = id;
-        $scope.id_chronic = id_chronic;
+        $scope.refno = refno;
+        $scope.refno_chronic = refno_chronic;
 
-        $scope.ok = function(type, lotsize, price, name_jp, description, id, id_chronic) {
-          if (!type) {
+        $scope.ok = function(name, type, lotsize, price, name_jp, description, refno, refno_chronic) {
+          if (!lotsize) {
             alert('Bead Type should not be blank');
+            Utils.dialog('Bead Type should not be blank');
           }
           else {
-            DataService.updateBead(name, type, lotsize, price, name_jp, description, id, id_chronic);
+            DataService.updateBead(id, name, type, lotsize, price, name_jp, description, refno, refno_chronic);
             $mdDialog.hide();
           }
         }
@@ -54,8 +101,8 @@ myApp.controller('beadsController',
         }
 
         $scope.delete = function() {
-          if (confirm('Is it ok to delete Bead: ' + name + ' ?')) {
-            DataService.deleteBead(name);
+          if(confirm('Is it ok to delete Bead: ' + name + ' ?')) {
+            DataService.deleteBead(id);
             $mdDialog.hide();
           }
         }
@@ -75,14 +122,15 @@ myApp.controller('beadsController',
         preserveScope: true,
         locals: {
           types: $scope.types,
+          id: bead.id,
           name: bead.name,
           type: bead.type,
           lotsize: bead.lotsize,
           price: bead.price,
           name_jp: bead.name_jp,
           description: bead.description,
-          id: bead.id,
-          id_chronic: bead.id_chronic
+          refno: bead.refno,
+          refno_chronic: bead.refno_chronic
         }
       });
 
@@ -92,7 +140,7 @@ myApp.controller('beadsController',
     }
 
     $scope.newBead = function(ev) {
-      function dialogController($scope, $mdDialog, names, types, name, type, lotsize, price, name_jp, description, id, id_chronic) {
+      function dialogController($scope, $mdDialog, names, types, name, type, lotsize, price, name_jp, description, refno, refno_chronic) {
         $scope.names = names;
         $scope.types = types;
         $scope.name = name;
@@ -101,10 +149,10 @@ myApp.controller('beadsController',
         $scope.price = price;
         $scope.name_jp = name_jp;
         $scope.description = description;
-        $scope.id = id;
-        $scope.id_chronic = id_chronic;
+        $scope.refno = refno;
+        $scope.refno_chronic = refno_chronic;
 
-        $scope.ok = function(name, type, lotsize, price, name_jp, description, id, id_chronic) {
+        $scope.ok = function(name, type, lotsize, price, name_jp, description, refno, refno_chronic) {
           if (!name) {
             alert('Bead Name should not be blank');
           }
@@ -115,7 +163,7 @@ myApp.controller('beadsController',
             alert('Bead Type should not be blank');
           }
           else {
-            DataService.insertBead(name, type, lotsize, price, name_jp, description, id, id_chronic);
+            DataService.insertBead(name, type, lotsize, price, name_jp, description, refno, refno_chronic);
             $mdDialog.hide();
           }
         }
@@ -146,8 +194,8 @@ myApp.controller('beadsController',
           price: null,
           name_jp: "",
           description: "",
-          id: null,
-          id_chronic: null
+          refno: null,
+          refno_chronic: null
         }
       });
 

@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 
 // Route includes
+var transactions = require('./routes/transactions');
 var dashboard = require('./routes/dashboard');
 var hospitals = require('./routes/hospitals');
 var beads = require('./routes/beads');
@@ -37,6 +38,7 @@ var sessionCheck = function(req, res, next) {
 
 // Routes
 app.use('/login', login);
+app.use('/transactions', sessionCheck, transactions);
 app.use('/dashboard', sessionCheck, dashboard);
 app.use('/hospitals', sessionCheck, hospitals);
 app.use('/beads', sessionCheck, beads);
