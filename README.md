@@ -13,7 +13,7 @@ This is the Code for Change 2017 project for Shine On! Kids (http://sokids.org/)
 
 **Beads Order Screen for Hospitals (Platform: Web)**
 * Beads Order Screen​
-  * Create a screen for hospitals to order beads. Hospitals order beads to SOK by mail or phone now​
+  * Create a login/password screen for hospitals to order beads. Hospitals order beads to SOK by mail or phone now​
 * Order Status Screen​
   * Create a screen to refer order history and delivery/backorder status​
 * “Beads of Courage” Activities Tracking Screen​
