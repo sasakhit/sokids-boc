@@ -10,7 +10,7 @@ var pgp = require('pg-promise')(options);
 
 router.get('/',  function(req, res) {
   var results = [];
-  var sql = "SELECT id, name, postal, address, phone, dept, title, contact1, contact2, email FROM hospitals ORDER BY postal";
+  var sql = "SELECT id, name, postal, address, phone, dept, title, contact1, contact2, email, username, password FROM hospitals ORDER BY postal";
 
   connection.result(sql)
     .then(function (data) {
