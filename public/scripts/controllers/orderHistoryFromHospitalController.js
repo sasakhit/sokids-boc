@@ -1,53 +1,83 @@
-myApp.controller('transactionsController',
+myApp.controller('orderHistoryFromHospitalController',
   ['$rootScope', '$scope', '$route', '$uibModal', '$log', '$mdDialog', '$cookies', '$filter', 'LoginService', 'DataService', 'TranStatus', 'TranType',
   function($rootScope, $scope, $route, $uibModal, $log, $mdDialog, $cookies, $filter, LoginService, DataService, TranStatus, TranType) {
 
     LoginService.loginCheck();
-    getBeads();
-    getHospitals();
-    getTransactions();
+    load();
+    
+    function load() {
+      getHospitals().then(function() {
+        getTransactions();
+      });
+      getBeads();
+    }
+
+    $scope.reload = function() {
+      load();
+    }
 
     function getBeads() {
       DataService.getBeads().then(function(data) {
         $scope.beads = _.uniq(_.map(data, function(bead) {
-          return {'id':bead.id, 'name':bead.name, 'stock_qty':bead.stock_qty, 'unreceived_qty':bead.unreceived_qty, 'undelivered_qty':bead.undelivered_qty};
+          return {'id':bead.id, 'name':bead.name, 'name_jp':bead.name_jp, 'stock_qty':bead.stock_qty, 'unreceived_qty':bead.unreceived_qty, 'undelivered_qty':bead.undelivered_qty};
         }), 'id');
       });
     }
 
     function getHospitals() {
-      DataService.getHospitals().then(function(data) {
-        $scope.hospitals = _.uniq(_.map(data, function(hospital) { return {'id':hospital.id, 'name':hospital.name, 'postal':hospital.postal, 'address':hospital.address}; }), 'id');
-        $scope.hospitalsForFilter = DataService.getHospitalsForFilterHash($scope.hospitals.concat());
+      var promise = DataService.getHospitals().then(function(data) {
+        $scope.hospitals = data;
 
-        $scope.$watch('selectedHospital', function(newValue) {
-          $rootScope.selectedHospital = newValue;
-        })
+        $scope.isAdmin = false;
 
-        if (! $scope.selectedHospital && $rootScope.selectedHospital) {
-          $scope.selectedHospital = $rootScope.selectedHospital;
+        if ($scope.isAdmin && $scope.hospital) {
+          $scope.hospital = _.filter($scope.hospitals, function(hospital) { return hospital.name === $scope.selectedHospital.name; })[0];
+        } else {
+          var username = window.localStorage.boc_user;
+          var username = 'keio';
+          $scope.hospital = _.filter($scope.hospitals, function(hospital) { return hospital.username === username; })[0];
         }
 
-        $scope.hospitalFilter = function(transaction) {
-          return DataService.isFilteredByHospital($scope.selectedHospital, transaction.hospital);
-        };
+        $scope.$watch('hospital', function(newValue) {
+          $rootScope.selectedHospital = (newValue) ? newValue.name : '';
+        })
+
+        if (! $scope.hospital && $rootScope.selectedHospital) {
+          $scope.hospital = _.filter($scope.hospitals, function(hospital) { return hospital.name === $rootScope.selectedHospital; })[0];
+        }
       });
+
+      return promise;
     }
 
     function getTransactions() {
-      DataService.getTransactions().then(function(data) {
-        var rawData = data;
+      var hospital_id = ($scope.hospital) ? $scope.hospital.id : -1;
+      DataService.getTransactions(hospital_id).then(function(transaction) {
+        var rawData = _.filter(transaction, function(tran) { return tran.status === TranStatus.DELIVER || tran.status === TranStatus.DONE });
         $scope.transactions = _.map(rawData, function(data) {
           data.hospital = {'id':(data.hospital_id) ? data.hospital_id : TranType.getHospitalInWeb(data.type).id,
                            'name':(data.hospital_name) ? data.hospital_name : TranType.getHospitalInWeb(data.type).name};
-          data.bead = {'id':data.bead_id, 'name':data.bead_name, 'stock_qty':data.stock_qty, 'unreceived_qty':data.unreceived_qty, 'undelivered_qty':data.undelivered_qty};
+          data.bead = {'id':data.bead_id, 'name':data.bead_name, 'name_jp':data.bead_name_jp, 'stock_qty':data.stock_qty, 'unreceived_qty':data.unreceived_qty, 'undelivered_qty':data.undelivered_qty};
           data.typeInWeb = TranType.getTypeInWeb(data.type);
+
+          data.statusInWeb = TranStatus.getStatusInHospitalScreen(data.status);
+          if (data.status === TranStatus.DELIVER) {
+            data.statusInWeb += '<br> - 未発送は ' + data.open_qty.toString() + ' 個';
+          }
+
+          var link_trans = _.filter(transaction, function(link_tran) { return link_tran.linkid === data.id; });
+          if (link_trans.length > 0) {
+            data.statusInWeb += _.reduce(link_trans, function(result, link_tran, index) {
+              result += '<br> - ' + link_tran.asof + ' に ' + link_tran.qty.toString() + ' 個発送';
+              return result;
+            }, '')
+          }
           return data;
         })
 
-        var statuses = _.sortBy(_.uniq(_.map(rawData, function(data){ return data.status; })));
+        var statuses = _.sortBy(_.uniq(_.map(rawData, function(data){ return TranStatus.getStatusInHospitalScreen(data.status); })));
         $scope.statusesForFilter = _.filter(statuses, function(status){ return status; });
-        $scope.statusesForFilter.unshift('All');
+        $scope.statusesForFilter.unshift('すべて');
 
         $scope.$watch('selectedStatus', function(newValue) {
           $rootScope.selectedStatus = newValue;
@@ -58,10 +88,10 @@ myApp.controller('transactionsController',
         }
 
         $scope.statusFilter = function(transaction) {
-          if (! $scope.selectedStatus || $scope.selectedStatus == 'All' || $scope.selectedStatus == '') {
+          if (! $scope.selectedStatus || $scope.selectedStatus == 'すべて' || $scope.selectedStatus == '') {
             return true;
           } else {
-            return transaction.status == $scope.selectedStatus;
+            return (transaction.statusInWeb.indexOf($scope.selectedStatus) >= 0) ? true : false;
           }
         };
 

@@ -34,7 +34,7 @@
           </td -->
           <td class="hidden-xs"><img ng-src="images/{{bead.name}}.jpg" on-error-src="images/error.png" width="50px" height="50px"></td>
           <td>{{bead.type}}</td>
-          <td>{{bead.refno}}<br><span ng-show="bead.refno_chronic">({{bead.refno_chronic}})</span></td>
+          <td>{{bead.refno}}<span ng-show="bead.refno_chronic"><br>({{bead.refno_chronic}})</span></td>
           <td>{{bead.name}}<br>{{bead.name_jp}}</td>
           <td>{{bead.description}}</td>
           <td class="hidden-xs">{{bead.lotsize}}</td>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <title>Delivery Sheet</title>
+
+  <!-- Normalize or reset CSS with your favorite library -->
+  <link rel="stylesheet" href="/styles/normalize.css">
+
+  <!-- Load paper.css for happy printing -->
+  <link rel="stylesheet" href="/styles/paper.css">
+
+  <!-- Set page size here: A5, A4 or A3 -->
+  <!-- Set also "landscape" if you need -->
+  <style>@page { size: A4 }</style>
+
+  <!-- Custom styles for this document -->
+  <link href='https://fonts.googleapis.com/css?family=Tangerine:700' rel='stylesheet' type='text/css'>
+  <style>
+    body   { font-family: serif }
+    h1      { margin: 0 }
+    table   { font-size: 8pt; }
+    table.sub { font-size: 8pt; margin-left: 7mm;}
+    th      { border: 1px solid black; }
+    td      { border: 1px solid black; }
+    th.seqno { border: 1px solid black; width: 20mm;}
+    th.type { border: 1px solid black; width: 20mm;}
+    td.name-jp  { border: 1px solid black; width: 40mm; font-weight: bold;}
+    td.name-en  { border: 1px solid black; width: 50mm; font-weight: bold;}
+    th.number  { border: 1px solid black; width: 15mm;}
+    td.desc {width: 51mm; color: gray}
+    div.block-left { float: left; width: 60%; height: 20%}
+    div.block-right { float: right; width: 40%; height: 20%}
+    div.neg-margin-10 { margin-bottom: -10mm }
+    div.neg-margin-5 { margin-bottom: -5mm }
+  </style>
+</head>
+
+<!-- Set "A5", "A4" or "A3" for class name -->
+<!-- Set also "landscape" if you need -->
+<body class="A4">
+
+  <script type="text/javascript" src="/vendors/angular.js"></script>
+  <script type="text/javascript">
+      var app = angular.module('DeliverySheet', [])
+      app.controller('DeliverySheetController', function ($scope, $window) {
+          $scope.order = $window.order;
+          $scope.beads = $window.beads;
+          $scope.hospital = $window.hospital;
+      });
+  </script>
+  <div ng-app="DeliverySheet" ng-controller="DeliverySheetController">
+
+  <!-- Each sheet element should have the class "sheet" -->
+  <!-- "padding-**mm" is optional: you can set 10, 15, 20 or 25 -->
+  <section class="sheet padding-10mm">
+
+    <div class="neg-margin-10">
+      <h2 align="center">お届け票</h2>
+    </div>
+    <div class="neg-margin-5">
+      <h5 align="right">{{order.date}}</h5>
+    </div>
+
+    <hr>
+
+    <div class="block-left">
+      <h4>〒{{hospital.postal}}<br>{{hospital.address}}<br>{{order.hospital.name}}</h4>
+      <br>
+      <h3><u><pre>                           御中</pre></u></h3>
+    </div>
+
+    <div class="block-right">      
+      <p>
+        <img src="../../images/icons/sok_logo.png" width="120px" height="60px" align="right">
+        <h5>認定　特定非営利活動法人<br>シャイン・オン・キッズ</h5>
+      </p>
+      <h5>〒103-0023<br>東京都中央区日本橋本町3-3-6 ワカ末ビル 7階<br>Tel: 03-6202-7262<br>Email: boc@sokids.org</h5>
+    </div>
+
+    <br>
+    <h5>このたびはビーズ・オブ・カレッジのプログラムにご参加いただき誠にありがとうございます。<br>
+    お届けするビーズは下記のとおりになっておりますので、ご確認ください。</h5>
+
+    <table align="center">
+      <tr>
+        <th class="seqno">番号<br>()内は慢性</th>
+        <th class="type">タイプ</th>
+        <th colspan="2">ビーズ名 (日本語 / 英語)<br>説明</th>
+        <th class="number">数量</th>
+      </tr>
+      <tbody ng-repeat="bead in beads | filter : { show: true }">
+        <tr>
+          <td rowspan="2" align="center">{{bead.refno}}<span ng-show="bead.refno_chronic"><br>({{bead.refno_chronic}})</span></td>
+          <td rowspan="2" align="center">{{bead.type_jp}}</td>
+          <td class="name-jp">{{bead.name_jp}}</td>
+          <td class="name-en">{{bead.name}}</td>
+          <td rowspan="2" align="right">{{order[bead.name + '.delv']}}&nbsp;</td>
+        </tr>
+        <tr>
+          <td class="desc" colspan="2">{{bead.description}}&nbsp;</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+</body>
+
+</html>

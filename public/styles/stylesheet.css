@@ -23,11 +23,12 @@ tr td {
     width: 3%;
     word-wrap:break-word;
     text-overflow: ellipsis;
+    font-family:'roboto', sans-serif;
 }
-
 
 th{
     padding:150px 150px 150px 150px;
+    font-family:'roboto', sans-serif;
 }
 
 

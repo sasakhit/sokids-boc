@@ -1,0 +1,27 @@
+<md-dialog aria-label="Order from Hospital">
+
+  <md-toolbar class="md-primary">
+      <div class="md-toolbar-tools">
+        <h2>{{selectedBead}}</h2>
+      </div>
+  </md-toolbar>
+
+  <md-content layout-padding layout="column" style="max-width:800px;max-height:810px;">
+    <div id="mediumDiv">
+      <div class="form-group">
+        <label for="asof">注文日 (yyyy/mm/dd):</label><br>
+        <md-datepicker ng-model="asof"></md-datepicker>
+      </div>
+
+      <label>数量:</label>
+      <div class="form-group">
+        <input class="form-control" type="number" ng-model="qty" placeholder="ビーズの数量">
+      </div>
+    </div>
+
+    <md-dialog-actions>
+      <md-button class="md-warn md-raised" ng-click="cancel()">キャンセル</md-button>
+      <md-button class="md-primary md-raised" ng-click="ok(asof, qty);">注文</md-button>
+    </md-dialog-actions>
+  </md-content>
+</md-dialog>

@@ -12,12 +12,12 @@ myApp.factory('DataService',
         getInventoryDetails : getInventoryDetails,
         getBeads : getBeads,
         getTypesForFilter : getTypesForFilter,
+        getTypesForFilterInJapanese : getTypesForFilterInJapanese,
         getHospitals : getHospitals,
         getParties : getParties,
         getHospitalsForFilter : getHospitalsForFilter,
         getHospitalsForFilterHash : getHospitalsForFilterHash,
         isFilteredByHospital : isFilteredByHospital,
-        isFilteredByHospitalHash : isFilteredByHospitalHash,
         isFilteredByType : isFilteredByType,
         getBracketType : getBracketType,
         getTotalType : getTotalType,
@@ -32,8 +32,8 @@ myApp.factory('DataService',
         deleteHospital : deleteHospital
       };
 
-      function getTransactions() {
-        return $http.get('/transactions').then(function(response) {
+      function getTransactions(hospital_id = null) {
+        return $http.get('/transactions', {params: {hospital_id:hospital_id}}).then(function(response) {
           return response.data;
         });
       }
@@ -130,6 +130,11 @@ myApp.factory('DataService',
         return types;
       }
 
+      function getTypesForFilterInJapanese(types) {
+        types.unshift('すべて');
+        return types;
+      }
+
       function getHospitals() {
         return $http.get('/hospitals').then(function(response) {
           return response.data;
@@ -151,30 +156,22 @@ myApp.factory('DataService',
       }
 
       function getHospitalsForFilterHash(hospitals) {
-        for (var hospital of [{'id':0, 'name':'All'}]) {
+        for (var hospital of [{'id':0, 'name':'BOC', 'postal':'', 'address':''}, {'id':-1, 'name':'All', 'postal':'', 'address':''}]) {
           hospitals.unshift(hospital);
         }
         return hospitals;
       }
 
       function isFilteredByHospital(selectedHospital, hospital) {
-        if (! selectedHospital || selectedHospital == 'All' || selectedHospital == '') {
+        if (! selectedHospital || selectedHospital == 'All' || selectedHospital == 'すべて' || selectedHospital == '') {
           return true;
         } else {
-          return hospital == selectedHospital;
-        }
-      }
-
-      function isFilteredByHospitalHash(selectedHospital, hospital) {
-        if (! selectedHospital || selectedHospital.name == 'All' || selectedHospital.name == '') {
-          return true;
-        } else {
-          return hospital == selectedHospital;
+          return hospital.name == selectedHospital;
         }
       }
 
       function isFilteredByType(selectedType, type) {
-        if (! selectedType || selectedType == "All" || selectedType == "") {
+        if (! selectedType || selectedType == "All" || selectedType == "すべて" || selectedType == "") {
           return true;
         } else {
           return type == selectedType;

@@ -418,7 +418,7 @@ SELECT
        WHEN i.party = 'Receive' THEN 'RECEIVE_FROM_SUPPLIER'
        WHEN i.comment = 'B/O' THEN 'ORDER_FROM_HOSPITAL'
        WHEN i.comment = 'Deliver for B/O' THEN 'DELIVER_TO_HOSPITAL'
-       ELSE 'DELIVER_TO_HOSTPITAL' END,
+       ELSE 'DELIVER_TO_HOSPITAL' END,
   qty,
   CASE WHEN i.comment = 'B/O' THEN qty ELSE null END, -- open_qty
   b.id,

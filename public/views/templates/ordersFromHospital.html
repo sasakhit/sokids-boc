@@ -1,0 +1,44 @@
+<div class="container-fluid">
+  <div class="alt-table-responsive">
+    <h3>ビーズ注文</h3>
+    <h4 ng-hide="isAdmin">{{hospital.name}}</h4>
+    <md-input-container ng-show="isAdmin">
+      <label>病院名</label>
+      <md-select ng-model="hospital" ng-change="reload()">
+        <md-option ng-value="hospital" ng-repeat="hospital in hospitals">{{hospital.name}}</md-option>
+      </md-select>
+    </md-input-container>
+    
+    <table class="table table-hover table-condensed">
+      <thead>
+        <tr>
+          <th colspan="2" class="col-md-1 col-sm-1 hidden-xs">
+            <md-input-container>
+              <label>タイプ</label>
+                <md-select ng-model="selectedType">
+                  <md-option ng-value="type" ng-repeat="type in typesForFilter">{{type}}</md-option>
+                </md-select>
+            </md-input-container>
+          </th>
+          <th class="col-md-1 col-sm-1 col-xs-1">タイプ</th>
+          <th class="col-md-1 col-sm-1 col-xs-1">番号<br>(慢性)</th>
+          <th class="col-md-2 col-sm-2 col-xs-2">ビーズ名<br>(英語)</th>
+          <th class="col-md-3 col-sm-4 col-xs-3">説明</th>
+          <th class="col-md-1 col-sm-1 hidden-xs">注文数</th>
+        </tr>
+      </thead>
+      <tbody ng-repeat="bead in beads | filter : typeFilter ">
+        <tr>
+          <td class="hidden-xs"><button class="btn btn-danger btn-sm" ng-click="orderBead($event, bead, hospital)">注文</button></td>
+          <td class="hidden-xs"><img ng-src="images/{{bead.name}}.jpg" on-error-src="images/error.png" width="50px" height="50px"></td>
+          <td>{{bead.type_jp}}</td>
+          <td>{{bead.refno}}<span ng-show="bead.refno_chronic"><br>({{bead.refno_chronic}})</span></td>
+          <td>{{bead.name_jp}}<br>{{bead.name}}</td>
+          <td>{{bead.description}}</td>
+          <td class="hidden-xs">{{order[bead.name]}}</td>
+        </tr>
+      </tbody>
+    </table>
+    <button class="btn btn-warning" ng-click="newBead($event)">New</button>
+  </div>
+</div>

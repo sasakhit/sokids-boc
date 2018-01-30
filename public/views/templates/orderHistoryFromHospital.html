@@ -1,0 +1,42 @@
+<div class="container-fluid">
+  <div class="alt-table-responsive">
+    <h3>注文履歴</h3>
+    <h4 ng-hide="isAdmin">{{hospital.name}}</h4>
+    <md-input-container ng-show="isAdmin">
+      <label>病院名</label>
+      <md-select ng-model="hospital" ng-change="reload()">
+        <md-option ng-value="hospital" ng-repeat="hospital in hospitals">{{hospital.name}}</md-option>
+      </md-select>
+    </md-input-container>
+    <md-input-container>
+      <label>ステータス</label>
+      <md-select ng-model="selectedStatus">
+        <md-option ng-value="status" ng-repeat="status in statusesForFilter">{{status}}</md-option>
+      </md-select>
+    </md-input-container>
+
+    <table class="table table-hover table-condensed">
+      <thead>
+        <tr>
+          <th class="col-md-1 col-sm-1 hidden-xs"></th>
+          <th class="col-md-1 col-sm-1 col-xs-1">注文日</th>
+          <th class="col-md-3 col-sm-3 col-xs-3">ビーズ名<br>(英語)</th>
+          <th class="col-md-1 col-sm-1 col-xs-1">注文数量</th>
+          <th class="col-md-4 col-sm-4 col-xs-4">ステータス</th>
+        </tr>
+      </thead>
+      <tbody ng-repeat="transaction in transactions | filter : hospitalFilter | filter : statusFilter">
+        <tr>
+          <td class="hidden-xs"><button class="btn btn-primary btn-sm" ng-click="editTransaction($event, transaction)">Edit</button></td>
+          <td>{{transaction.asof}}</td>
+          <td class="col-md-2 col-sm-2 col-xs-2">
+              <img ng-src="images/{{transaction.bead.name}}.jpg" on-error-src="images/error.png" width="50px" height="50px" align="left" style="margin-right:10px">
+              {{transaction.bead.name_jp}}<br>{{transaction.bead.name}}
+          </td>
+          <td>{{transaction.qty}}</td>
+          <td><div ng-bind-html="transaction.statusInWeb"></div></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

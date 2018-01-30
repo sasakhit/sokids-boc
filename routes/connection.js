@@ -9,7 +9,7 @@ var pgp = require('pg-promise')(options);
 //var cn = process.env.DATABASE_URL;
 
 var cn = {
-  host: 'localhost',
+  host: '127.0.0.1',
   port: 5432,
   database: 'boc',
   user: 'postgres',

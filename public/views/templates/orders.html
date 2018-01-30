@@ -1,0 +1,48 @@
+<div class="container-fluid">
+  <div class="alt-table-responsive">
+    <h3>Orders</h3>
+
+    <md-input-container>
+      <label>Hospital</label>
+      <md-select ng-model="selectedHospital">
+        <md-option ng-value="hospital.name" ng-repeat="hospital in hospitalsForFilter">{{hospital.name}}</md-option>
+      </md-select>
+    </md-input-container>
+
+    <table class="table table-hover table-condensed" style="table-layout:fixed;">
+      <thead>
+        <tr>
+          <th style="width:110px;"></th>
+          <th style="width:90px;">Date</th>
+          <th style="width:80px;">Type</th>
+          <th style="width:180px;">Hospital</th>
+          <th ng-repeat="bead in beads" style="width:70px;">{{bead.name}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>Stock<br>Unreceived<br>Undelivered</td>
+          <td ng-repeat="bead in beads">
+            {{bead.stock_qty}}
+            <br><span ng-show="bead.unreceived_qty">{{bead.unreceived_qty}}</span>
+            <br><span ng-show="bead.undelivered_qty">{{bead.undelivered_qty}}</span>
+          </td>
+        </tr>
+        <tr ng-repeat="order in orders | filter : hospitalFilter">
+          <td ng-switch="order.type" class="hidden-xs">
+            <span ng-switch-when="ORDER_FROM_HOSPITAL"><button class="btn btn-primary btn-sm" ng-click="genControlSheet($event, order, beads)">Order Sheet</button></span>
+            <span ng-switch-when="DELIVER_TO_HOSPITAL"><button class="btn btn-warning btn-sm" ng-click="genDeliverySheet($event, order, beads, hospitals)">Delivery Sheet</button></span>
+            <span ng-switch-default></span>
+          </td>
+          <td>{{order.date}}</td>
+          <td>{{order.typeInWeb}}</td>
+          <td>{{order.hospital.name}}</td>
+          <td ng-repeat="bead in beads">{{order[bead.name]}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,8 +1,7 @@
-<md-dialog aria-label="Receive from Supplier">
-
+<md-dialog aria-label="Deliver">
   <md-toolbar class="md-primary">
     <div class="md-toolbar-tools">
-      <h2>Receive from Supplier: {{selectedBead}}</h2>
+      <h2>Deliver to Hospitals: {{selectedBead}}</h2>
     </div>
   </md-toolbar>
 
@@ -14,15 +13,22 @@
         <md-datepicker ng-model="asof"></md-datepicker>
       </div>
 
-      <label>Quantity (by bag - lotsize: {{lotsize}}):</label>
+      <label>Hospital:</label>
       <div class="form-group">
-        <input class="form-control" type="number" ng-model="qty" placeholder="by bag (integer and/or fraction)">
+          <input class="form-control" type="text" ng-model="hospital.name" readonly>
       </div>
+
+      <label>Quantity (by number of beads):</label>
+      <div class="form-group">
+        <input class="form-control" type="number" ng-model="qty" placeholder="by number of beads">
+      </div>
+
     </div>
 
     <md-dialog-actions>
       <md-button class="md-warn md-raised" ng-click="cancel()">Cancel</md-button>
-      <md-button class="md-primary md-raised" ng-click="ok(asof, qty * lotsize);">OK</md-button>
+      <md-button class="md-primary md-raised" ng-click="ok(asof, qty, hospital);">OK</md-button>
     </md-dialog-actions>
+
   </md-content>
 </md-dialog>

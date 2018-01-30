@@ -7,10 +7,12 @@
   <title>Order Sheet</title>
 
   <!-- Normalize or reset CSS with your favorite library -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.css">
+  <!-- link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.3/normalize.css" -->
+  <link rel="stylesheet" href="/styles/normalize.css">
 
   <!-- Load paper.css for happy printing -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paper-css/0.2.3/paper.css">
+  <!-- link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paper-css/0.2.3/paper.css" -->
+  <link rel="stylesheet" href="/styles/paper.css">
 
   <!-- Set page size here: A5, A4 or A3 -->
   <!-- Set also "landscape" if you need -->
@@ -20,16 +22,16 @@
   <link href='https://fonts.googleapis.com/css?family=Tangerine:700' rel='stylesheet' type='text/css'>
   <style>
     body   { font-family: serif }
-    h1      { margin: 0 }
-    table   { font-size: 8pt; }
-    table.sub { font-size: 8pt; margin-left: 7mm;}
+    h3, h5 { margin: 0 }
+    table   { font-size: 7pt; }
+    table.sub { font-size: 7pt; margin-left: 7mm;}
     th      { border: 1px solid black; }
     td      { border: 1px solid black; }
-    th.seqno { border: 0px; width: 7mm;}
-    td.name-jp  { border: 1px solid black; width: 23mm; font-weight: bold;}
-    td.name-en  { border: 1px solid black; width: 28mm; font-weight: bold;}
-    th.number  { border: 1px solid black; width: 10mm;}
-    td.desc {width: 51mm; color: gray}
+    th.seqno { border: 1px solid black; width: 6mm;}
+    td.name-jp  { border: 1px solid black; width: 28mm; font-weight: bold;}
+    td.name-en  { border: 1px solid black; width: 30mm; font-weight: bold;}
+    th.number  { border: 1px solid black; width: 9mm;}
+    td.desc {width: 58mm; color: gray}
     div.block-left { float: left; width: 50%;}
     div.block-right { float: right; width: 50%;}
   </style>
@@ -54,7 +56,8 @@
 <!-- Set also "landscape" if you need -->
 <body class="A4">
 
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.9/angular.min.js"></script>
+  <!-- script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.9/angular.min.js"></script -->
+  <script type="text/javascript" src="/vendors/angular.js"></script>
   <script type="text/javascript">
       var app = angular.module('OrderSheet', [])
       app.controller('OrderSheetController', function ($scope, $window) {
@@ -65,120 +68,120 @@
   <div ng-app="OrderSheet" ng-controller="OrderSheetController">
 
 
-
   <!-- Each sheet element should have the class "sheet" -->
   <!-- "padding-**mm" is optional: you can set 10, 15, 20 or 25 -->
   <section class="sheet padding-10mm">
 
-    <h1>{{order.party}}</h1>
+    <h3>{{order.hospital.name}}</h3>
 
     <article>
       <div class="block-left">
-      <p>プロセス</p>
-      <table>
+        <h5>プロセス</h5>
+        <table>
           <tr>
-            <th class="seqno"></th>
+            <th class="seqno">番号</th>
             <th colspan="2" align="left">（）内は慢性</th>
             <th class="number">希望数</th>
             <th class="number">送付数</th>
             <th class="number">欠品数</th>
           </tr>
           <tbody ng-repeat="bead in beads | filter : { type: 'Process' }">
-          <tr>
-            <td rowspan="2"></td>
-            <td class="name-jp">{{bead.name_jp}}</td>
-            <td class="name-en">{{bead.name}}</td>
-            <td rowspan="2" align="right">{{order[bead.name + '.reqd']}}</td>
-            <td rowspan="2" align="right">{{order[bead.name + '.delv']}}</td>
-            <td rowspan="2" align="right">{{order[bead.name + '.miss']}}</td>
-          </tr>
-          <tr>
-          <td class="desc" colspan="2">{{bead.description}}&nbsp;</td>
-          </tr>
-        </tbody>
-      </table>
+            <tr>
+              <td rowspan="2" align="center">{{bead.refno}}<span ng-show="bead.refno_chronic"><br>({{bead.refno_chronic}})</span></td>
+              <td class="name-jp">{{bead.name_jp}}</td>
+              <td class="name-en">{{bead.name}}</td>
+              <td rowspan="2" align="right">{{order[bead.name + '.reqd']}}</td>
+              <td rowspan="2" align="right">{{order[bead.name + '.delv']}}</td>
+              <td rowspan="2" align="right">{{order[bead.name + '.miss']}}</td>
+            </tr>
+            <tr>
+            <td class="desc" colspan="2">{{bead.description}}&nbsp;</td>
+            </tr>
+          </tbody>
+        </table>
 
-      <p>その他</p>
-      <table>
+        <br clear="all">
+
+        <h5>その他</h5>
+        <table>
           <tr>
-            <th class="seqno"></th>
+            <th class="seqno">番号</th>
             <th colspan="2" align="left">（）内は慢性</th>
             <th class="number">希望数</th>
             <th class="number">送付数</th>
             <th class="number">欠品数</th>
           </tr>
           <tbody ng-repeat="bead in beads | filter : { type: 'Other' }">
+            <tr>
+              <td rowspan="2"></td>
+              <td class="name-jp">{{bead.name_jp}}</td>
+              <td class="name-en">{{bead.name}}</td>
+              <td rowspan="2" align="right">{{order[bead.name + '.reqd']}}</td>
+              <td rowspan="2" align="right">{{order[bead.name + '.delv']}}</td>
+              <td rowspan="2" align="right">{{order[bead.name + '.miss']}}</td>
+            </tr>
+            <tr>
+            <td class="desc" colspan="2">{{bead.description}}&nbsp;</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <br clear="all"><br>
+
+        <table class="sub">
+          <tr><th rowspan="2" align="left" style="width:50mm;">病院名：<br>{{order.party}}</th><th style="width:30mm;">発注日</th></tr>
+          <tr><td><br><br></td></tr>
+        </table>
+
+        <br clear="all">
+
+        <table class="sub">
+          <tr><th style="width:30mm;">発送日</th><th style="width:25mm;">担当者</th></tr>
+          <tr><td><br><br></td><td><br><br></td></tr>
+          <tr><th style="width:30mm;">入力日</th><th style="width:25mm;">担当者</th></tr>
+          <tr><td><br><br></td><td><br><br></td></tr>
+        </table>
+      </div>
+
+      <div class="block-right">
+      <h5>スペシャル</h5>
+        <table align="right">
           <tr>
-            <td rowspan="2"></td>
-            <td class="name-jp">{{bead.name_jp}}</td>
-            <td class="name-en">{{bead.name}}</td>
-            <td rowspan="2" align="right">{{order[bead.name + '.reqd']}}</td>
-            <td rowspan="2" align="right">{{order[bead.name + '.delv']}}</td>
-            <td rowspan="2" align="right">{{order[bead.name + '.miss']}}</td>
+            <th class="seqno">番号</th>
+            <th colspan="2" align="left">（）内は慢性</th>
+            <th class="number">希望数</th>
+            <th class="number">送付数</th>
+            <th class="number">欠品数</th>
           </tr>
-          <tr>
-          <td class="desc" colspan="2">{{bead.description}}&nbsp;</td>
-          </tr>
-        </tbody>
-      </table>
+          <tbody ng-repeat="bead in beads | filter : { type: 'Special' }">
+            <tr>
+              <td rowspan="2"></td>
+              <td class="name-jp">{{bead.name_jp}}</td>
+              <td class="name-en">{{bead.name}}</td>
+              <td rowspan="2" align="right">{{order[bead.name + '.reqd']}}</td>
+              <td rowspan="2" align="right">{{order[bead.name + '.delv']}}</td>
+              <td rowspan="2" align="right">{{order[bead.name + '.miss']}}</td>
+            </tr>
+            <tr>
+              <td class="desc" colspan="2">{{bead.description}}&nbsp;</td>
+            </tr>
+          </tbody>
+        </table>
 
-      <br><br><br>
+        <br clear="all"><br>
 
-      <table class="sub">
-        <tr><th rowspan="2" align="left" style="width:50mm;">病院名：<br>{{order.party}}</th><th style="width:30mm;">発注日</th></tr>
-        <tr><td><br><br></td></tr>
-      </table>
+        <table align="right">
+          <tr><th style="width:25mm;">欠品</th><th style="width:30mm;">発送日</th><th style="width:25mm;">担当者</th></tr>
+          <tr><td align="center">有　　　無</td><td><br><br></td><td><br><br></td></tr>
+          <tr><th style="border:0px"></th><th style="width:30mm;">入力日</th><th style="width:25mm;">担当者</th></tr>
+          <tr><td style="border:0px"></td><td><br><br></td><td><br><br></td></tr>
+        </table>
 
-      <br>
-
-      <table class="sub">
-        <tr><th style="width:30mm;">発送日</th><th style="width:25mm;">担当者</th></tr>
-        <tr><td><br><br></td><td><br><br></td></tr>
-        <tr><th style="width:30mm;">入力日</th><th style="width:25mm;">担当者</th></tr>
-        <tr><td><br><br></td><td><br><br></td></tr>
-      </table>
-    </div>
-
-    <div class="block-right">
-    <p>スペシャル</p>
-    <table>
-        <tr>
-          <th class="seqno"></th>
-          <th colspan="2" align="left">（）内は慢性</th>
-          <th class="number">希望数</th>
-          <th class="number">送付数</th>
-          <th class="number">欠品数</th>
-        </tr>
-        <tbody ng-repeat="bead in beads | filter : { type: 'Special' }">
-        <tr>
-          <td rowspan="2"></td>
-          <td class="name-jp">{{bead.name_jp}}</td>
-          <td class="name-en">{{bead.name}}</td>
-          <td rowspan="2" align="right">{{order[bead.name + '.reqd']}}</td>
-          <td rowspan="2" align="right">{{order[bead.name + '.delv']}}</td>
-          <td rowspan="2" align="right">{{order[bead.name + '.miss']}}</td>
-        </tr>
-        <tr>
-        <td class="desc" colspan="2">{{bead.description}}&nbsp;</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <br><br><br>
-
-    <table class="sub">
-      <tr><th style="width:25mm;">欠品</th><th style="width:30mm;">発送日</th><th style="width:25mm;">担当者</th></tr>
-      <tr><td align="center">有　　　無</td><td><br><br></td><td><br><br></td></tr>
-      <tr><th style="border:0px"></th><th style="width:30mm;">入力日</th><th style="width:25mm;">担当者</th></tr>
-      <tr><td style="border:0px"></td><td><br><br></td><td><br><br></td></tr>
-    </table>
-
-  </div>
+      </div>
 
     </article>
 
   </section>
 </div>
 </body>
-
 </html>

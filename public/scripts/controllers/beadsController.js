@@ -1,6 +1,6 @@
 myApp.controller('beadsController',
-  ['$rootScope', '$scope', '$route', '$log', '$mdDialog', '$cookies', '$filter', 'LoginService', 'DataService', 'Utils', 'TranType', 'TranStatus',
-  function($rootScope, $scope, $route, $log, $mdDialog, $cookies, $filter, LoginService, DataService, Utils, TranType, TranStatus) {
+  ['$rootScope', '$scope', '$route', '$log', '$mdDialog', '$cookies', '$filter', 'LoginService', 'DataService', 'Utils', 'TranType', 'TranStatus', 'BeadType',
+  function($rootScope, $scope, $route, $log, $mdDialog, $cookies, $filter, LoginService, DataService, Utils, TranType, TranStatus, BeadType) {
 
     LoginService.loginCheck();
     getBeads();
@@ -14,7 +14,7 @@ myApp.controller('beadsController',
         $scope.typesForFilter = DataService.getTypesForFilter(types.concat());
 
         $scope.$watch('selectedType', function(newValue) {
-          $rootScope.selectedType = newValue;
+          $rootScope.selectedType = BeadType.getTypeInEnglish(newValue);
         })
 
         if (! $scope.selectedType && $rootScope.selectedType) {
@@ -86,9 +86,13 @@ myApp.controller('beadsController',
         $scope.refno_chronic = refno_chronic;
 
         $scope.ok = function(name, type, lotsize, price, name_jp, description, refno, refno_chronic) {
-          if (!lotsize) {
-            alert('Bead Type should not be blank');
+          if (!type) {
+            //alert('Bead Type should not be blank');
             Utils.dialog('Bead Type should not be blank');
+          }
+          else if (!lotsize) {
+            //alert('Lot Size should not be blank');
+            Utils.dialog('Lot Size should not be blank');
           }
           else {
             DataService.updateBead(id, name, type, lotsize, price, name_jp, description, refno, refno_chronic);

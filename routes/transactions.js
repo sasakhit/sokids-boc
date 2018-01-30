@@ -10,44 +10,22 @@ var options = {
 var pgp = require('pg-promise')(options);
 
 router.get('/',  function(req, res) {
-
   var results = [];
+  var hospital_id = req.query.hospital_id;
   var sql = "SELECT t.id, to_char(t.asof, 'YYYY/MM/DD') asof, t.type, t.qty, t.open_qty, "
-          + "       b.id bead_id, b.name bead_name, b.type bead_type, b.refno bead_refno, b.lotsize bead_lotsize, b.stock_qty, b.unreceived_qty, b.undelivered_qty, "
+          + "       b.id bead_id, b.name bead_name, b.name_jp bead_name_jp, b.type bead_type, b.refno bead_refno, b.lotsize bead_lotsize, b.stock_qty, b.unreceived_qty, b.undelivered_qty, "
           + "       h.id hospital_id, h.name hospital_name, t.linkid, t.status "
           + "FROM ( transactions t LEFT OUTER JOIN beads b ON t.bead_id = b.id ) "
           + "                      LEFT OUTER JOIN hospitals h ON t.hospital_id = h.id "
+          + "WHERE t.hospital_id = COALESCE($1, t.hospital_id)"
           + "ORDER BY t.asof DESC, h.name ASC, t.timestamp DESC";
-
-  connection.result(sql)
+  
+  connection.result(sql, [hospital_id])
     .then(function (data) {
       results = data.rows;
     })
     .catch(function (error) {
       console.log("ERROR/get:", error);
-    })
-    .finally(function () {
-      pgp.end();
-      return res.json(results);
-    });
-});
-
-router.get('/orders', function(req, res) {
-  var results = [];
-  var sql = "SELECT to_char(asof, 'YYYY/MM/DD') asof, party, "
-          + "CASE WHEN comment like 'B/O%' THEN '' ELSE COALESCE(comment, '') END AS comment, name, "
-          + "SUM(CASE WHEN comment like 'B/O%' THEN 0 ELSE qty END)::integer qty, "
-          + "SUM(CASE WHEN comment like 'B/O%' THEN qty ELSE 0 END)::integer backorder_qty "
-          + "FROM inventory "
-          + "GROUP BY asof, party, CASE WHEN comment like 'B/O%' THEN '' ELSE COALESCE(comment, '') END, name "
-          + "ORDER BY asof DESC, MAX(timestamp) DESC";
-
-  connection.result(sql)
-    .then(function (data) {
-      results = data.rows;
-    })
-    .catch(function (error) {
-      console.log("ERROR/get/orders:", error);
     })
     .finally(function () {
       pgp.end();

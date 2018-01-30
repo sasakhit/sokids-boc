@@ -11,6 +11,8 @@ myApp.factory('LoginService',
           var user = response.data;
           if (user == '') {
             showPromptLogin();
+          } else {
+            window.localStorage['boc_user'] = user;
           }
         });
       }
