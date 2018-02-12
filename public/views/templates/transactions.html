@@ -14,23 +14,32 @@
         <md-option ng-value="status" ng-repeat="status in statusesForFilter">{{status}}</md-option>
       </md-select>
     </md-input-container>
+    <md-input-container>
+      <md-checkbox ng-model="showCancel">
+        Show Cancel
+      </md-checkbox>
+    </md-input-container>
 
     <table class="table table-hover table-condensed">
       <thead>
         <tr>
           <th class="col-md-1 col-sm-1 hidden-xs"></th>
           <th class="col-md-2 col-sm-2 col-xs-2">Date</th>
-          <th class="col-md-2 col-sm-2 col-xs-2">Type</th>
+          <th class="col-md-1 col-sm-1 col-xs-1">Type</th>
           <th class="col-md-3 col-sm-3 col-xs-3">Hospital / Supplier</th>
           <th class="col-md-3 col-sm-3 col-xs-3">Bead</th>
-          <th class="col-md-2 col-sm-2 col-xs-2">Qty</th>
-          <th class="col-md-2 col-sm-2 col-xs-2">Open Qty</th>
+          <th class="col-md-1 col-sm-1 col-xs-1">Qty</th>
+          <th class="col-md-1 col-sm-1 col-xs-1">Open Qty</th>
           <th class="col-md-2 col-sm-2 col-xs-2">Status</th>
+          <th class="col-md-3 col-sm-3 col-xs-3">Comment</th>
         </tr>
       </thead>
       <tbody ng-repeat="transaction in transactions | filter : hospitalFilter | filter : statusFilter">
         <tr>
-          <td class="hidden-xs"><button class="btn btn-primary btn-sm" ng-click="editTransaction($event, transaction)">Edit</button></td>
+          <td class="hidden-xs" ng-switch="transaction.status">
+            <span ng-switch-when="CANCEL"><button class="btn btn-primary btn-sm" disabled>Edit</button></span>
+            <span ng-switch-default><button class="btn btn-primary btn-sm" ng-click="editTransaction($event, transaction)">Edit</button></span>
+          </td>
           <td>{{transaction.asof}}</td>
           <td>{{transaction.typeInWeb}}</td>
           <td>{{transaction.hospital.name}}</td>
@@ -41,6 +50,10 @@
             <span ng-switch-when="RECEIVE"><button class="btn btn-warning btn-sm" ng-click="receiveBead($event, transaction)">{{transaction.status}}</button></span>
             <span ng-switch-when="DELIVER"><button class="btn btn-danger btn-sm" ng-click="deliverBead($event, transaction)">{{transaction.status}}</button></span>
             <span ng-switch-default>{{transaction.status}}</span>
+          </td>
+          <td>
+            <span ng-show="transaction.comment_hospital">病院: {{transaction.comment_hospital}}<br></span>
+            <span ng-show="transaction.comment">SOK: {{transaction.comment}}</span>
           </td>
         </tr>
       </tbody>

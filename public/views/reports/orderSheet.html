@@ -87,7 +87,7 @@
           </tr>
           <tbody ng-repeat="bead in beads | filter : { type: 'Process' }">
             <tr>
-              <td rowspan="2" align="center">{{bead.refno}}<span ng-show="bead.refno_chronic"><br>({{bead.refno_chronic}})</span></td>
+              <td rowspan="2" align="center">{{bead.refno}}</td>
               <td class="name-jp">{{bead.name_jp}}</td>
               <td class="name-en">{{bead.name}}</td>
               <td rowspan="2" align="right">{{order[bead.name + '.reqd']}}</td>

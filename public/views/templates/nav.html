@@ -1,17 +1,18 @@
 <div ng-controller="navController" ng-app="myApp" ng-cloak>
   <md-nav-bar md-selected-nav-item="currentNavItem" nav-bar-aria-label="navigation links">
     <!-- md-nav-item md-nav-href="#dashboard" name="dashboard">Inventory</md-nav-item -->
-    <md-nav-item md-nav-href="#beads" name="beads">Beads</md-nav-item>
-    <md-nav-item md-nav-href="#transactions" name="transactions">Transactions</md-nav-item>
-    <md-nav-item md-nav-href="#orders" name="orders">Orders</md-nav-item>
-    <md-nav-item md-nav-href="#hospitals" name="hospitals">Hospitals</md-nav-item>
+    <md-nav-item md-nav-href="#beads" name="beads" ng-show="isAdmin">Beads</md-nav-item>
+    <md-nav-item md-nav-href="#transactions" name="transactions" ng-show="isAdmin">Transactions</md-nav-item>
+    <md-nav-item md-nav-href="#orders" name="orders" ng-show="isAdmin">Orders</md-nav-item>
+    <md-nav-item md-nav-href="#hospitals" name="hospitals" ng-show="isAdmin">Hospitals</md-nav-item>
     <!-- md-nav-item md-nav-href="#transaction_histrory" name="transaction_histrory">Transaction History</md-nav-item -->
     <!-- md-nav-item md-nav-href="#order_histrory" name="order_histrory">Order History</md-nav-item -->
     <md-nav-item md-nav-href="#hospital_orders" name="hospital_orders">ビーズ注文</md-nav-item>
     <md-nav-item md-nav-href="#hospital_order_history" name="hospital_order_history">注文履歴</md-nav-item>
 
+    <span flex></span>
     <form action="/logout" method="get" class="board-form">
-      <button class="btn btn-danger" type="submit">Logout</button>
+      <md-button class="md-accent" type="submit">Logout</md-button>
     </form>
 
   </md-nav-bar>

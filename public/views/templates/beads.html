@@ -1,22 +1,23 @@
 <div class="container-fluid">
   <div class="alt-table-responsive">
     <h3>Beads</h3>
+
+    <md-input-container>
+      <label>Bead Type</label>
+      <md-select ng-model="selectedType">
+        <md-option ng-value="type" ng-repeat="type in typesForFilter">{{type}}</md-option>
+      </md-select>
+    </md-input-container>
+
     <table class="table table-hover table-condensed">
       <thead>
         <tr>
-          <th colspan="3" class="col-md-2 col-sm-2 hidden-xs">
-            <md-input-container>
-              <label>Bead Type</label>
-                <md-select ng-model="selectedType">
-                  <md-option ng-value="type" ng-repeat="type in typesForFilter">{{type}}</md-option>
-                </md-select>
-            </md-input-container>
-          </th>
+          <th colspan="3" class="col-md-2 col-sm-2 hidden-xs"></th>
           <th class="col-md-1 col-sm-1 col-xs-1">Bead Type</th>
-          <th class="col-md-1 col-sm-1 col-xs-1">Reference<br>(Chronic)</th>
-          <th class="col-md-2 col-sm-2 col-xs-2">Bead Name<br>Bead Name (JP)</th>
-          <th class="col-md-3 col-sm-3 col-xs-3">Description</th>
-          <th class="col-md-1 col-sm-1 hidden-xs">Lot Size</th>
+          <th class="col-md-1 col-sm-1 col-xs-1">Reference</th>
+          <th class="col-md-2 col-sm-2 col-xs-2">Bead Name<br>Bead Name (EN)</th>
+          <th class="col-md-3 col-sm-3 col-xs-3">Description<br>Description (EN)</th>
+          <th class="col-md-1 col-sm-1 hidden-xs">Lot Size<br>(Hospital)</th>
           <th class="col-md-1 col-sm-1 hidden-xs">Price ($)</th>
           <th class="col-md-1 col-sm-1 hidden-xs">Stock<br>Qty</th>
           <th class="col-md-1 col-sm-1 hidden-xs">Unreceived<br>Qty</th>
@@ -34,10 +35,10 @@
           </td -->
           <td class="hidden-xs"><img ng-src="images/{{bead.name}}.jpg" on-error-src="images/error.png" width="50px" height="50px"></td>
           <td>{{bead.type}}</td>
-          <td>{{bead.refno}}<span ng-show="bead.refno_chronic"><br>({{bead.refno_chronic}})</span></td>
-          <td>{{bead.name}}<br>{{bead.name_jp}}</td>
-          <td>{{bead.description}}</td>
-          <td class="hidden-xs">{{bead.lotsize}}</td>
+          <td>{{bead.refno}}</td>
+          <td>{{bead.name_jp}}<br>{{bead.name}}</td>
+          <td>{{bead.description}}<br>{{bead.description_en}}</td>
+          <td class="hidden-xs">{{bead.lotsize}}<br>{{bead.lotsize_hospital}}</td>
           <td class="hidden-xs">{{bead.price}}</td>
           <td class="hidden-xs">{{bead.stock_qty}}</td>
           <td class="hidden-xs">{{bead.unreceived_qty}}</td>

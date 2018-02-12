@@ -2,26 +2,32 @@
 
   <md-toolbar class="md-primary">
       <div class="md-toolbar-tools">
-        <h2>{{selectedBead}}</h2>
+        <img ng-src="images/{{selectedBead_en}}.jpg" on-error-src="images/error.png" width="50px" height="50px" border="1" style="margin-right:10px; border:solid 2px white">
+        <h2>注文: {{selectedBead}}</h2>
       </div>
   </md-toolbar>
 
-  <md-content layout-padding layout="column" style="max-width:800px;max-height:810px;">
+  <md-content layout-padding layout="column">
     <div id="mediumDiv">
       <div class="form-group">
         <label for="asof">注文日 (yyyy/mm/dd):</label><br>
         <md-datepicker ng-model="asof"></md-datepicker>
       </div>
 
-      <label>数量:</label>
+      <label>数量 ({{lotsize_hospital}} 個単位):</label>
       <div class="form-group">
-        <input class="form-control" type="number" ng-model="qty" placeholder="ビーズの数量">
+        <input class="form-control" type="number" ng-model="qty" placeholder="ビーズの数量 ({{lotsize_hospital}} 個単位)">
+      </div>
+
+      <label>コメント:</label>
+      <div class="form-group">
+        <textarea name="comment_hospital" cols="50" rows="2" ng-model="comment_hospital" placeholder="いつまでに必要か、など"></textarea>
       </div>
     </div>
 
     <md-dialog-actions>
       <md-button class="md-warn md-raised" ng-click="cancel()">キャンセル</md-button>
-      <md-button class="md-primary md-raised" ng-click="ok(asof, qty);">注文</md-button>
+      <md-button class="md-primary md-raised" ng-click="ok(asof, qty, comment_hospital);">注文</md-button>
     </md-dialog-actions>
   </md-content>
 </md-dialog>

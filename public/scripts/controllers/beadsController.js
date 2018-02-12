@@ -73,7 +73,7 @@ myApp.controller('beadsController',
     }
 
     $scope.editBead = function(ev, bead) {
-      function dialogController($scope, $mdDialog, types, id, name, type, lotsize, price, name_jp, description, refno, refno_chronic) {
+      function dialogController($scope, $mdDialog, types, id, name, type, lotsize, price, name_jp, description, refno, lotsize_hospital, description_en) {
         $scope.types = types;
         $scope.id = id;
         $scope.name = name;
@@ -83,9 +83,10 @@ myApp.controller('beadsController',
         $scope.name_jp = name_jp;
         $scope.description = description;
         $scope.refno = refno;
-        $scope.refno_chronic = refno_chronic;
+        $scope.lotsize_hospital = lotsize_hospital;
+        $scope.description_en = description_en;
 
-        $scope.ok = function(name, type, lotsize, price, name_jp, description, refno, refno_chronic) {
+        $scope.ok = function(name, type, lotsize, price, name_jp, description, refno, lotsize_hospital, description_en) {
           if (!type) {
             //alert('Bead Type should not be blank');
             Utils.dialog('Bead Type should not be blank');
@@ -95,7 +96,7 @@ myApp.controller('beadsController',
             Utils.dialog('Lot Size should not be blank');
           }
           else {
-            DataService.updateBead(id, name, type, lotsize, price, name_jp, description, refno, refno_chronic);
+            DataService.updateBead(id, name, type, lotsize, price, name_jp, description, refno, lotsize_hospital, description_en);
             $mdDialog.hide();
           }
         }
@@ -134,7 +135,8 @@ myApp.controller('beadsController',
           name_jp: bead.name_jp,
           description: bead.description,
           refno: bead.refno,
-          refno_chronic: bead.refno_chronic
+          lotsize_hospital: bead.lotsize_hospital,
+          description_en: bead.description_en
         }
       });
 
@@ -144,7 +146,7 @@ myApp.controller('beadsController',
     }
 
     $scope.newBead = function(ev) {
-      function dialogController($scope, $mdDialog, names, types, name, type, lotsize, price, name_jp, description, refno, refno_chronic) {
+      function dialogController($scope, $mdDialog, names, types, name, type, lotsize, price, name_jp, description, refno, lotsize_hospital, description_en) {
         $scope.names = names;
         $scope.types = types;
         $scope.name = name;
@@ -154,9 +156,10 @@ myApp.controller('beadsController',
         $scope.name_jp = name_jp;
         $scope.description = description;
         $scope.refno = refno;
-        $scope.refno_chronic = refno_chronic;
+        $scope.lotsize_hospital = lotsize_hospital;
+        $scope.description_en = description_en;
 
-        $scope.ok = function(name, type, lotsize, price, name_jp, description, refno, refno_chronic) {
+        $scope.ok = function(name, type, lotsize, price, name_jp, description, refno, lotsize_hospital, description_en) {
           if (!name) {
             alert('Bead Name should not be blank');
           }
@@ -167,7 +170,7 @@ myApp.controller('beadsController',
             alert('Bead Type should not be blank');
           }
           else {
-            DataService.insertBead(name, type, lotsize, price, name_jp, description, refno, refno_chronic);
+            DataService.insertBead(name, type, lotsize, price, name_jp, description, refno, lotsize_hospital, description_en);
             $mdDialog.hide();
           }
         }
@@ -199,7 +202,8 @@ myApp.controller('beadsController',
           name_jp: "",
           description: "",
           refno: null,
-          refno_chronic: null
+          lotsize_hospital: null,
+          description_en: null
         }
       });
 

@@ -13,13 +13,20 @@ router.get('/', function(req, res) {
 });
 
 router.post('/', function(req, res) {
-  var user = req.body.user;
+  var username = req.body.username;
   var password = req.body.password;
 
-  connection.result("SELECT 1 FROM users WHERE username = $1 AND password = $2", [user, password])
+  var sql = "SELECT username, TRUE isadmin FROM users WHERE username = $1 AND password = $2 "
+          + "UNION "
+          + "SELECT username, FALSE isadmin FROM hospitals WHERE username = $1 AND password = $2 "
+
+  connection.result(sql, [username, password])
     .then(function (data) {
-      if (data.rowCount == 1) {
-        req.session.user = user;
+      if (data.rowCount === 1) {
+        //req.session.user = user;
+        //req.session.isAdmin = data.rows[0].isAdmin;
+        //req.session.user = {username: username, isAdmin: data[0].isAdmin};
+        req.session.user = data.rows[0];
       }
     })
     .catch(function (error) {

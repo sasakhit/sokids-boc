@@ -58,10 +58,10 @@ myApp.controller('transactionsController',
         }
 
         $scope.statusFilter = function(transaction) {
-          if (! $scope.selectedStatus || $scope.selectedStatus == 'All' || $scope.selectedStatus == '') {
-            return true;
+          if (! $scope.selectedStatus || $scope.selectedStatus === 'All' || $scope.selectedStatus === '') {
+            return (! $scope.showCancel && transaction.status === TranStatus.CANCEL) ? false : true;
           } else {
-            return transaction.status == $scope.selectedStatus;
+            return transaction.status === $scope.selectedStatus;
           }
         };
 
@@ -90,8 +90,9 @@ myApp.controller('transactionsController',
         $scope.hospital = transaction.hospital;
         $scope.bead = transaction.bead;
         $scope.qty = transaction.qty;
+        $scope.comment = transaction.comment;
 
-        $scope.ok = function(asof, hospital, bead, qty) {
+        $scope.ok = function(asof, hospital, bead, qty, comment) {
           var movement = qty - transaction.qty;
           var is_bead_edit = (bead === transaction.bead) ? false : true;
 
@@ -205,9 +206,9 @@ myApp.controller('transactionsController',
             }
           }
 
-          DataService.updateTransaction(transaction.id, $filter('date')(asof, "yyyy/MM/dd"), hospital.id, bead.id, qty, updTran.open_qty, updTran.status);
+          DataService.updateTransaction(transaction.id, $filter('date')(asof, "yyyy/MM/dd"), hospital.id, bead.id, qty, updTran.open_qty, updTran.status, comment, null);
           if (updLinkTran.is_update) {
-            DataService.updateTransaction(link_tran.id, null, null, null, null, updLinkTran.open_qty, updLinkTran.status);
+            DataService.updateTransaction(link_tran.id, null, null, null, null, updLinkTran.open_qty, updLinkTran.status, null, null);
           }
           if (updBead.is_update) {
             DataService.updateBead(transaction.bead_id, null, null, null, null, null, null, null, null, updBead.stock_qty, updBead.unreceived_qty, updBead.undelivered_qty);
@@ -269,7 +270,8 @@ myApp.controller('transactionsController',
                 break;
             }
 
-            DataService.deleteTransaction(transaction.id);
+            //DataService.deleteTransaction(transaction.id);
+            DataService.updateTransaction(transaction.id, null, null, null, null, null, TranStatus.CANCEL);
             if (updLinkTran.is_update) {
               DataService.updateTransaction(link_tran.id, null, null, null, null, updLinkTran.open_qty, updLinkTran.status);
             }
@@ -366,9 +368,11 @@ myApp.controller('transactionsController',
       function dialogController($scope, $mdDialog, bead, selectedAsof, transaction) {
         $scope.selectedBead = transaction.bead_name;
         $scope.hospital = transaction.hospital;
+        $scope.lotsize_hospital = transaction.bead_lotsize_hospital;
+        $scope.comment = transaction.comment;
         $scope.asof = (selectedAsof) ? new Date(selectedAsof) : new Date();
 
-        $scope.ok = function(asof, qty) {
+        $scope.ok = function(asof, qty, comment) {
           if (qty > transaction.open_qty) {
             alert('Deliver quantity should be <= Open quantity');
           } else {
@@ -380,7 +384,7 @@ myApp.controller('transactionsController',
 
             var open_qty = transaction.open_qty - qty;
             status = (open_qty == 0) ? TranStatus.DONE : null;
-            DataService.updateTransaction(transaction.id, null, null, null, null, open_qty, status);
+            DataService.updateTransaction(transaction.id, null, null, null, null, open_qty, status, comment);
 
             var stock_qty = bead.stock_qty - qty;
             var undelivered_qty = bead.undelivered_qty - qty;

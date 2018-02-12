@@ -8,23 +8,22 @@
         <md-option ng-value="hospital" ng-repeat="hospital in hospitals">{{hospital.name}}</md-option>
       </md-select>
     </md-input-container>
+    <md-input-container>
+      <label>タイプ</label>
+      <md-select ng-model="selectedType">
+        <md-option ng-value="type" ng-repeat="type in typesForFilter">{{type}}</md-option>
+      </md-select>
+    </md-input-container>
     
     <table class="table table-hover table-condensed">
       <thead>
         <tr>
-          <th colspan="2" class="col-md-1 col-sm-1 hidden-xs">
-            <md-input-container>
-              <label>タイプ</label>
-                <md-select ng-model="selectedType">
-                  <md-option ng-value="type" ng-repeat="type in typesForFilter">{{type}}</md-option>
-                </md-select>
-            </md-input-container>
-          </th>
+          <th colspan="2" class="col-md-1 col-sm-1 hidden-xs"></th>
           <th class="col-md-1 col-sm-1 col-xs-1">タイプ</th>
-          <th class="col-md-1 col-sm-1 col-xs-1">番号<br>(慢性)</th>
+          <th class="col-md-1 col-sm-1 col-xs-1">番号</th>
           <th class="col-md-2 col-sm-2 col-xs-2">ビーズ名<br>(英語)</th>
-          <th class="col-md-3 col-sm-4 col-xs-3">説明</th>
-          <th class="col-md-1 col-sm-1 hidden-xs">注文数</th>
+          <th class="col-md-3 col-sm-3 col-xs-3">説明</th>
+          <th class="col-md-1 col-sm-1 col-xs-1">注文数</th>
         </tr>
       </thead>
       <tbody ng-repeat="bead in beads | filter : typeFilter ">
@@ -35,7 +34,7 @@
           <td>{{bead.refno}}<span ng-show="bead.refno_chronic"><br>({{bead.refno_chronic}})</span></td>
           <td>{{bead.name_jp}}<br>{{bead.name}}</td>
           <td>{{bead.description}}</td>
-          <td class="hidden-xs">{{order[bead.name]}}</td>
+          <td>{{order[bead.name]}}</td>
         </tr>
       </tbody>
     </table>

@@ -11,7 +11,7 @@ var pgp = require('pg-promise')(options);
 router.get('/',  function(req, res) {
 
   var results = [];
-  var sql = "SELECT id, name, type, lotsize, price, name_jp, description, refno, refno_chronic, stock_qty, unreceived_qty, undelivered_qty FROM beads "
+  var sql = "SELECT id, name, type, lotsize, price, name_jp, description, refno, lotsize_hospital, description_en, stock_qty, unreceived_qty, undelivered_qty FROM beads "
           + "ORDER BY CASE WHEN type = 'Process' THEN 1 "
           + "              WHEN type = 'Special' THEN 2 "
           + "              WHEN type = 'Alphabet' THEN 7 "
@@ -43,11 +43,12 @@ router.put('/',  function(req, res) {
           + "    name_jp = COALESCE($5, name_jp), "
           + "    description = COALESCE($6, description), "
           + "    refno = COALESCE($7, refno), "
-          + "    refno_chronic = COALESCE($8, refno_chronic), "
-          + "    stock_qty = COALESCE($9, stock_qty), "
-          + "    unreceived_qty = COALESCE($10, unreceived_qty), "
-          + "    undelivered_qty = COALESCE($11, undelivered_qty) "
-          + "WHERE id = $12";
+          + "    lotsize_hospital = COALESCE($8, lotsize_hospital), "
+          + "    description_en = COALESCE($9, description_en), "
+          + "    stock_qty = COALESCE($10, stock_qty), "
+          + "    unreceived_qty = COALESCE($11, unreceived_qty), "
+          + "    undelivered_qty = COALESCE($12, undelivered_qty) "
+          + "WHERE id = $13";
 
   var updBead = {
     id: req.body.id,
@@ -58,14 +59,15 @@ router.put('/',  function(req, res) {
     name_jp: req.body.name_jp,
     description: req.body.description,
     refno: req.body.refno,
-    refno_chronic: req.body.refno_chronic,
+    lotsize_hospital: req.body.lotsize_hospital,
+    description_en: req.body.description_en,
     stock_qty: req.body.stock_qty,
     unreceived_qty: req.body.unreceived_qty,
     undelivered_qty: req.body.undelivered_qty
   };
 
   connection.result(sql,
-    [updBead.name, updBead.type, updBead.lotsize, updBead.price, updBead.name_jp, updBead.description, updBead.refno, updBead.refno_chronic,
+    [updBead.name, updBead.type, updBead.lotsize, updBead.price, updBead.name_jp, updBead.description, updBead.refno, updBead.lotsize_hospital, updBead.description_en,
      updBead.stock_qty, updBead.unreceived_qty, updBead.undelivered_qty, updBead.id])
       .then(function (data) {
       })
@@ -81,7 +83,7 @@ router.put('/',  function(req, res) {
 
 router.post('/',  function(req, res) {
   var results = [];
-  var sql = "INSERT INTO beads (name, type, lotsize, price, name_jp, description, refno, refno_chronic) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)";
+  var sql = "INSERT INTO beads (name, type, lotsize, price, name_jp, description, refno, lotsize_hospital, description_en) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)";
 
   var newBead = {
     name: req.body.name,
@@ -91,10 +93,11 @@ router.post('/',  function(req, res) {
     name_jp: req.body.name_jp,
     description: req.body.description,
     refno: req.body.refno,
-    refno_chronic: req.body.refno_chronic
+    lotsize_hospital: req.body.lotsize_hospital,
+    description_en: req.body.description_en
   };
 
-  connection.result(sql, [newBead.name, newBead.type, newBead.lotsize, newBead.price, newBead.name_jp, newBead.description, newBead.refno, newBead.refno_chronic])
+  connection.result(sql, [newBead.name, newBead.type, newBead.lotsize, newBead.price, newBead.name_jp, newBead.description, newBead.refno, newBead.lotsize_hospital, newBead.description_en])
     .then(function (data) {
     })
     .catch(function (error) {

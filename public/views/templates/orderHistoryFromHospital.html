@@ -14,6 +14,11 @@
         <md-option ng-value="status" ng-repeat="status in statusesForFilter">{{status}}</md-option>
       </md-select>
     </md-input-container>
+    <md-input-container>
+      <md-checkbox ng-model="showCancel">
+        取消も表示
+      </md-checkbox>
+    </md-input-container>
 
     <table class="table table-hover table-condensed">
       <thead>
@@ -23,11 +28,15 @@
           <th class="col-md-3 col-sm-3 col-xs-3">ビーズ名<br>(英語)</th>
           <th class="col-md-1 col-sm-1 col-xs-1">注文数量</th>
           <th class="col-md-4 col-sm-4 col-xs-4">ステータス</th>
+          <th class="col-md-4 col-sm-4 col-xs-4">コメント</th>
         </tr>
       </thead>
       <tbody ng-repeat="transaction in transactions | filter : hospitalFilter | filter : statusFilter">
         <tr>
-          <td class="hidden-xs"><button class="btn btn-primary btn-sm" ng-click="editTransaction($event, transaction)">Edit</button></td>
+          <td class="hidden-xs" ng-switch="transaction.status">
+            <span ng-switch-when="CANCEL"><button class="btn btn-primary btn-sm" disabled>取消</button></span>
+            <span ng-switch-default><button class="btn btn-primary btn-sm" ng-click="cancelTransaction($event, transaction)">取消</button></span>
+          </td>
           <td>{{transaction.asof}}</td>
           <td class="col-md-2 col-sm-2 col-xs-2">
               <img ng-src="images/{{transaction.bead.name}}.jpg" on-error-src="images/error.png" width="50px" height="50px" align="left" style="margin-right:10px">
@@ -35,6 +44,10 @@
           </td>
           <td>{{transaction.qty}}</td>
           <td><div ng-bind-html="transaction.statusInWeb"></div></td>
+          <td>
+            <span ng-show="transaction.comment_hospital">病院: {{transaction.comment_hospital}}<br></span>
+            <span ng-show="transaction.comment">SOK: {{transaction.comment}}</span>
+          </td>
         </tr>
       </tbody>
     </table>

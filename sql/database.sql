@@ -36,6 +36,9 @@ CREATE TABLE beads
      undelivered_qty integer  -- Receive order by undelivered to hospitals
      );
 
+ALTER TABLE beads RENAME refno_chronic TO lotsize_hospital;
+ALTER TABLE beads ADD COLUMN description_en character varying(100);
+
 
 CREATE TABLE transactions
      (
@@ -54,6 +57,9 @@ CREATE TABLE transactions
 CREATE INDEX idx_bead ON transactions (bead_id);
 CREATE INDEX idx_hospital ON transactions (hospital_id);
 CREATE INDEX idx_status ON transactions (status);
+
+ALTER TABLE transactions ADD COLUMN comment character varying(100);
+ALTER TABLE transactions ADD COLUMN comment_hospital character varying(100);
 
 CREATE TABLE inventory
      (

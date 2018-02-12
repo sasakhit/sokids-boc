@@ -46,6 +46,7 @@ myApp.value('TranStatus', {
   RECEIVE: 'RECEIVE',
   DELIVER: 'DELIVER',
   DONE:    'DONE',
+  CANCEL:  'CANCEL',
   NA:      '',
   getStatusInHospitalScreen: function(type) {
     switch(type) {
@@ -53,6 +54,8 @@ myApp.value('TranStatus', {
         return '発送準備中';
       case this.DONE:
         return '発送済';
+      case this.CANCEL:
+        return '取消';
       default:
         return '';
     }

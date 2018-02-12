@@ -1,6 +1,7 @@
 <md-dialog aria-label="Deliver">
   <md-toolbar class="md-primary">
     <div class="md-toolbar-tools">
+      <img ng-src="images/{{selectedBead}}.jpg" on-error-src="images/error.png" width="50px" height="50px" border="1" style="margin-right:10px; border:solid 2px white">
       <h2>Deliver to Hospitals: {{selectedBead}}</h2>
     </div>
   </md-toolbar>
@@ -8,6 +9,7 @@
   <md-content layout-padding layout="column" style="max-width:800px;max-height:810px;">
 
     <div id="mediumDiv">
+
       <div class="form-group">
         <label for="asof">Date (yyyy/mm/dd):</label><br>
         <md-datepicker ng-model="asof"></md-datepicker>
@@ -20,14 +22,19 @@
 
       <label>Quantity (by number of beads):</label>
       <div class="form-group">
-        <input class="form-control" type="number" ng-model="qty" placeholder="by number of beads">
+        <input class="form-control" type="number" ng-model="qty" placeholder="by number of beads (lotsize: {{lotsize_hospital}})">
+      </div>
+
+      <label>Comment:</label>
+      <div class="form-group">
+        <input class="form-control" type="text" ng-model="comment">
       </div>
 
     </div>
 
     <md-dialog-actions>
       <md-button class="md-warn md-raised" ng-click="cancel()">Cancel</md-button>
-      <md-button class="md-primary md-raised" ng-click="ok(asof, qty, hospital);">OK</md-button>
+      <md-button class="md-primary md-raised" ng-click="ok(asof, qty, comment);">OK</md-button>
     </md-dialog-actions>
 
   </md-content>

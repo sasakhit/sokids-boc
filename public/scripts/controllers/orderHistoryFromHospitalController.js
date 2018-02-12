@@ -28,14 +28,13 @@ myApp.controller('orderHistoryFromHospitalController',
       var promise = DataService.getHospitals().then(function(data) {
         $scope.hospitals = data;
 
-        $scope.isAdmin = false;
+        //var user = JSON.parse(window.localStorage.boc_user);
+        //$scope.isAdmin = user.isadmin;
 
         if ($scope.isAdmin && $scope.hospital) {
           $scope.hospital = _.filter($scope.hospitals, function(hospital) { return hospital.name === $scope.selectedHospital.name; })[0];
         } else {
-          var username = window.localStorage.boc_user;
-          var username = 'keio';
-          $scope.hospital = _.filter($scope.hospitals, function(hospital) { return hospital.username === username; })[0];
+          $scope.hospital = _.filter($scope.hospitals, function(hospital) { return hospital.username === $rootScope.username; })[0];
         }
 
         $scope.$watch('hospital', function(newValue) {
@@ -53,7 +52,8 @@ myApp.controller('orderHistoryFromHospitalController',
     function getTransactions() {
       var hospital_id = ($scope.hospital) ? $scope.hospital.id : -1;
       DataService.getTransactions(hospital_id).then(function(transaction) {
-        var rawData = _.filter(transaction, function(tran) { return tran.status === TranStatus.DELIVER || tran.status === TranStatus.DONE });
+        //var rawData = _.filter(transaction, function(tran) { return tran.status === TranStatus.DELIVER || tran.status === TranStatus.DONE || tran.status === TranStatus.CANCEL });
+        var rawData = _.filter(transaction, function(tran) { return tran.type === TranType.ORDER_FROM_HOSPITAL });
         $scope.transactions = _.map(rawData, function(data) {
           data.hospital = {'id':(data.hospital_id) ? data.hospital_id : TranType.getHospitalInWeb(data.type).id,
                            'name':(data.hospital_name) ? data.hospital_name : TranType.getHospitalInWeb(data.type).name};
@@ -89,7 +89,7 @@ myApp.controller('orderHistoryFromHospitalController',
 
         $scope.statusFilter = function(transaction) {
           if (! $scope.selectedStatus || $scope.selectedStatus == 'すべて' || $scope.selectedStatus == '') {
-            return true;
+            return (! $scope.showCancel && transaction.status === TranStatus.CANCEL) ? false : true;
           } else {
             return (transaction.statusInWeb.indexOf($scope.selectedStatus) >= 0) ? true : false;
           }
@@ -111,7 +111,7 @@ myApp.controller('orderHistoryFromHospitalController',
       this.undelivered_qty = null;
     };
 
-    $scope.editTransaction = function(ev, transaction) {
+    $scope.cancelTransaction = function(ev, transaction) {
       function dialogController($scope, $mdDialog, beads, hospitals, transaction, link_tran) {
         $scope.beads = beads;
         $scope.hospitals = hospitals;
@@ -121,185 +121,28 @@ myApp.controller('orderHistoryFromHospitalController',
         $scope.bead = transaction.bead;
         $scope.qty = transaction.qty;
 
-        $scope.ok = function(asof, hospital, bead, qty) {
-          var movement = qty - transaction.qty;
-          var is_bead_edit = (bead === transaction.bead) ? false : true;
-
-          if (movement != 0 && is_bead_edit) {
-            alert('Cannot edit both bead and qty at the same time!');
-            return;
-          }
-
-          // For transaction update
-          var updTran = new UpdateTransaction();
-
-          // For linked transaction update
-          var updLinkTran = new UpdateTransaction();
-
-          // For bead qty update
-          var updBead = new UpdateBead();
-
-          // For bead qty update2 (in case of bead change)
-          var updBead2 = new UpdateBead();
-
-          if (is_bead_edit) {
-            switch (transaction.type) {
-              case TranType.ORDER_TO_SUPPLIER:
-                if (transaction.qty != transaction.open_qty) {
-                  alert('Cannot edit bead\nThis transaction has linked receive transactions');
-                  return;
-                } else {
-                  updBead.unreceived_qty = transaction.bead.unreceived_qty - qty;
-                  updBead.is_update = true;
-                  updBead2.unreceived_qty = bead.unreceived_qty + qty;
-                  updBead2.is_update = true;
-                }
-                break;
-              case TranType.RECEIVE_FROM_SUPPLIER:
-                alert('Cannot edit bead for receive transaction');
-                return;
-              case TranType.ORDER_FROM_HOSPITAL:
-                if (transaction.qty != transaction.open_qty) {
-                  alert('Cannot edit bead\nThis transaction has linked deliver transactions');
-                  return;
-                } else {
-                  updBead.undelivered_qty = transaction.bead.undelivered_qty - qty;
-                  updBead.is_update = true;
-                  updBead2.undelivered_qty = bead.undelivered_qty + qty;
-                  updBead2.is_update = true;
-                }
-                break;
-              case TranType.DELIVER_TO_HOSPITAL:
-                alert('Cannot edit bead for deliver transaction');
-                return;
-              default:
-                alert('Cannot edit bead for this transaction type');
-                return;
-            }
-          }
-
-          if (movement != 0) {
-            switch (transaction.type) {
-              case TranType.ORDER_TO_SUPPLIER:
-                if (transaction.open_qty + movement < 0) {
-                  alert('Cannot edit\nOpen quantity becomes negative');
-                  return;
-                } else {
-                  updBead.unreceived_qty = bead.unreceived_qty + movement;
-                  updTran.open_qty = transaction.open_qty + movement;
-                  if (transaction.status == TranStatus.DONE) updTran.status = TranStatus.RECEIVE;
-                  updBead.is_update = true;
-                }
-                break;
-              case TranType.RECEIVE_FROM_SUPPLIER:
-                if (link_tran.open_qty - movement < 0) {
-                  alert('Cannot edit!\nOpen quantity of linked order transaction becomes negative');
-                  return;
-                } else {
-                  updBead.stock_qty = bead.stock_qty + movement;
-                  updBead.unreceived_qty = bead.unreceived_qty - movement;
-                  updLinkTran.open_qty = link_tran.open_qty - movement;
-                  if (updLinkTran.open_qty == 0) updLinkTran.status = TranStatus.DONE;
-                  if (link_tran.status == TranStatus.DONE) updLinkTran.status = TranStatus.RECEIVE;
-                  updBead.is_update = true;
-                  updLinkTran.is_update = true;
-                }
-                break;
-              case TranType.ORDER_FROM_HOSPITAL:
-                if (transaction.open_qty + movement < 0) {
-                  alert('Cannot edit\nOpen quantity becomes negative');
-                  return;
-                } else {
-                  updBead.undelivered_qty = bead.undelivered_qty + movement;
-                  updTran.open_qty = transaction.open_qty + movement;
-                  if (transaction.status == TranStatus.DONE) updTran.status = TranStatus.DELIVER;
-                  updBead.is_update = true;
-                }
-                break;
-              case TranType.DELIVER_TO_HOSPITAL:
-                if (link_tran.open_qty - movement < 0) {
-                  alert('Cannot edit!\nOpen quantity of linked order transaction becomes negative');
-                  return;
-                } else {
-                  updBead.stock_qty = bead.stock_qty - movement;
-                  updBead.undelivered_qty = bead.undelivered_qty - movement;
-                  updLinkTran.open_qty = link_tran.open_qty - movement;
-                  if (updLinkTran.open_qty == 0) updLinkTran.status = TranStatus.DONE;
-                  if (link_tran.status == TranStatus.DONE) updLinkTran.status = TranStatus.DELIVER;
-                  updBead.is_update = true;
-                  updLinkTran.is_update = true;
-                }
-                break;
-              default:
-                break;
-            }
-          }
-
-          DataService.updateTransaction(transaction.id, $filter('date')(asof, "yyyy/MM/dd"), hospital.id, bead.id, qty, updTran.open_qty, updTran.status);
-          if (updLinkTran.is_update) {
-            DataService.updateTransaction(link_tran.id, null, null, null, null, updLinkTran.open_qty, updLinkTran.status);
-          }
-          if (updBead.is_update) {
-            DataService.updateBead(transaction.bead_id, null, null, null, null, null, null, null, null, updBead.stock_qty, updBead.unreceived_qty, updBead.undelivered_qty);
-          }
-          if (updBead2.is_update) {
-            DataService.updateBead(bead.id, null, null, null, null, null, null, null, null, updBead2.stock_qty, updBead2.unreceived_qty, updBead2.undelivered_qty);
-          }
-          $mdDialog.hide();
-        }
-
         $scope.cancel = function() {
           $mdDialog.hide();
         }
 
         $scope.delete = function() {
-          if (confirm('Is it ok to delete this transaction?')) {
+          if (confirm('取り消してもいいですか？')) {
             // For linked transaction update
             var updLinkTran = new UpdateTransaction();
 
             // For bead qty update
             var updBead = new UpdateBead();
 
-            switch (transaction.type) {
-              case TranType.ORDER_TO_SUPPLIER:
-                if (transaction.qty != transaction.open_qty) {
-                  alert('Cannot delete\nThis transaction has linked receive transactions');
-                  return;
-                } else {
-                  updBead.unreceived_qty = transaction.bead.unreceived_qty - transaction.qty;
-                  updBead.is_update = true;
-                }
-                break;
-              case TranType.RECEIVE_FROM_SUPPLIER:
-                updBead.stock_qty = transaction.bead.stock_qty - transaction.qty;
-                updBead.unreceived_qty = transaction.bead.unreceived_qty + transaction.qty;
-                updLinkTran.open_qty = link_tran.open_qty + transaction.qty;
-                if (link_tran.status == TranStatus.DONE) updLinkTran.status = TranStatus.RECEIVE;
-                updBead.is_update = true;
-                updLinkTran.is_update = true;
-                break;
-              case TranType.ORDER_FROM_HOSPITAL:
-                if (transaction.qty != transaction.open_qty) {
-                  alert('Cannot delete\nThis transaction has linked deliver transactions');
-                  return;
-                } else {
-                  updBead.undelivered_qty = transaction.bead.undelivered_qty - transaction.qty;
-                  updBead.is_update = true;
-                }
-                break;
-              case TranType.DELIVER_TO_HOSPITAL:
-                updBead.stock_qty = transaction.bead.stock_qty + transaction.qty;
-                updBead.undelivered_qty = transaction.bead.undelivered_qty + transaction.qty;
-                updLinkTran.open_qty = link_tran.open_qty + transaction.qty;
-                if (link_tran.status == TranStatus.DONE) updLinkTran.status = TranStatus.DELIVER;
-                updBead.is_update = true;
-                updLinkTran.is_update = true;
-                break;
-              default:
-                break;
+            if (transaction.qty != transaction.open_qty) {
+              alert('すでに発送済がありますので、取り消しできません。');
+              return;
+            } else {
+              updBead.undelivered_qty = transaction.bead.undelivered_qty - transaction.qty;
+              updBead.is_update = true;
             }
 
-            DataService.deleteTransaction(transaction.id);
+            //DataService.deleteTransaction(transaction.id);
+            DataService.updateTransaction(transaction.id, null, null, null, null, null, TranStatus.CANCEL);
             if (updLinkTran.is_update) {
               DataService.updateTransaction(link_tran.id, null, null, null, null, updLinkTran.open_qty, updLinkTran.status);
             }
@@ -314,9 +157,9 @@ myApp.controller('orderHistoryFromHospitalController',
       $mdDialog.show({
         controller: dialogController,
         targetEvent: ev,
-        ariaLabel:  'Edit Transaction',
+        ariaLabel:  'Cacnel Transaction',
         clickOutsideToClose: true,
-        templateUrl: 'views/templates/editTransaction.html',
+        templateUrl: 'views/templates/cancTransactionFromHospital.html',
         onComplete: afterShowAnimation,
         size: 'large',
         bindToController: true,
@@ -335,118 +178,5 @@ myApp.controller('orderHistoryFromHospitalController',
        // post-show code here: DOM element focus, etc.
       }
     }
-
-    $scope.receiveBead = function(ev, transaction) {
-      function dialogController($scope, $mdDialog, bead, selectedAsof, transaction) {
-        $scope.selectedBead = transaction.bead_name;
-        $scope.lotsize = transaction.bead_lotsize;
-        $scope.asof = (selectedAsof) ? new Date(selectedAsof) : new Date();
-
-        $scope.ok = function(asof, qty) {
-          if (qty > transaction.open_qty) {
-            alert('Receive quantity should be <= Open quantity');
-          } else {
-            $cookies.put('asofRecv', asof);
-            var type = TranType.RECEIVE_FROM_SUPPLIER;
-            var hospital_id = 0;
-            var status = TranType.getTranStatus(type);
-            DataService.insertTransaction($filter('date')(asof, "yyyy/MM/dd"), type, 0, transaction.bead_id, qty, null, status, transaction.id);
-
-            var open_qty = transaction.open_qty - qty;
-            status = (open_qty == 0) ? TranStatus.DONE : null;
-            DataService.updateTransaction(transaction.id, null, null, null, null, open_qty, status);
-
-            var stock_qty = bead.stock_qty + qty;
-            var unreceived_qty = bead.unreceived_qty - qty;
-            DataService.updateBead(transaction.bead_id, null, null, null, null, null, null, null, null, stock_qty, unreceived_qty, null);
-            $mdDialog.hide();
-          }
-        }
-
-        $scope.cancel = function() {
-          $mdDialog.hide();
-        }
-      }
-
-      $mdDialog.show({
-        controller: dialogController,
-        targetEvent: ev,
-        ariaLabel:  'Receive Bead',
-        clickOutsideToClose: true,
-        templateUrl: 'views/templates/recvBead.html',
-        onComplete: afterShowAnimation,
-        size: 'large',
-        bindToController: true,
-        autoWrap: false,
-        parent: angular.element(document.body),
-        preserveScope: true,
-        locals: {
-          bead: _.filter($scope.beads, function(bead) { return bead.id == transaction.bead_id; })[0],
-          selectedAsof: $cookies.get('asofRecv'),
-          transaction: transaction
-        }
-      });
-
-      function afterShowAnimation(scope, element, options) {
-         // post-show code here: DOM element focus, etc.
-      }
-    }
-
-    $scope.deliverBead = function(ev, transaction) {
-      function dialogController($scope, $mdDialog, bead, selectedAsof, transaction) {
-        $scope.selectedBead = transaction.bead_name;
-        $scope.hospital = transaction.hospital;
-        $scope.asof = (selectedAsof) ? new Date(selectedAsof) : new Date();
-
-        $scope.ok = function(asof, qty) {
-          if (qty > transaction.open_qty) {
-            alert('Deliver quantity should be <= Open quantity');
-          } else {
-            $cookies.put('asofDelv', asof);
-            var type = TranType.DELIVER_TO_HOSPITAL;
-            var hospital_id = 0;
-            var status = TranType.getTranStatus(type);
-            DataService.insertTransaction($filter('date')(asof, "yyyy/MM/dd"), type, transaction.hospital.id, transaction.bead_id, qty, null, status, transaction.id);
-
-            var open_qty = transaction.open_qty - qty;
-            status = (open_qty == 0) ? TranStatus.DONE : null;
-            DataService.updateTransaction(transaction.id, null, null, null, null, open_qty, status);
-
-            var stock_qty = bead.stock_qty - qty;
-            var undelivered_qty = bead.undelivered_qty - qty;
-            DataService.updateBead(transaction.bead_id, null, null, null, null, null, null, null, null, stock_qty, null, undelivered_qty);
-            $mdDialog.hide();
-          }
-        }
-
-        $scope.cancel = function() {
-          $mdDialog.hide();
-        }
-      }
-
-      $mdDialog.show({
-        controller: dialogController,
-        targetEvent: ev,
-        ariaLabel:  'Deliver Bead',
-        clickOutsideToClose: true,
-        templateUrl: 'views/templates/delvBead.html',
-        onComplete: afterShowAnimation,
-        size: 'large',
-        bindToController: true,
-        autoWrap: false,
-        parent: angular.element(document.body),
-        preserveScope: true,
-        locals: {
-          bead: _.filter($scope.beads, function(bead) { return bead.id == transaction.bead_id; })[0],
-          selectedAsof: $cookies.get('asofDelv'),
-          transaction: transaction
-        }
-      });
-
-      function afterShowAnimation(scope, element, options) {
-         // post-show code here: DOM element focus, etc.
-      }
-    }
-
   }
 ]);

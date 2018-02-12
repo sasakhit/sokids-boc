@@ -13,6 +13,7 @@ myApp.controller('ordersFromHospitalController',
     }
 
     $scope.reload = function() {
+      $scope.order = {};
       load();
     }
 
@@ -28,8 +29,8 @@ myApp.controller('ordersFromHospitalController',
             } else {
               order[transaction.bead_name] = transaction.open_qty;
             }
-            return order;
           }
+          return order;
         }, {});
       });
     }
@@ -38,14 +39,14 @@ myApp.controller('ordersFromHospitalController',
       var promise = DataService.getHospitals().then(function(data) {
         $scope.hospitals = data;
 
-        $scope.isAdmin = true;
+        //var user = JSON.parse(window.localStorage.boc_user);
+        //$scope.isAdmin = user.isadmin;
 
         if ($scope.isAdmin && $scope.hospital) {
-          $scope.hospital = _.filter($scope.hospitals, function(hospital) { return hospital.name === $scope.selectedHospital.name; })[0];
+          $scope.hospital = _.filter($scope.hospitals, function(hospital) { return hospital.name === $scope.hospital.name; })[0];
         } else {
-          var username = window.localStorage.boc_user;
-          //var username = 'keio';
-          $scope.hospital = _.filter($scope.hospitals, function(hospital) { return hospital.username === username; })[0];
+          //var username = window.localStorage.boc_user;
+          $scope.hospital = _.filter($scope.hospitals, function(hospital) { return hospital.username === $rootScope.username; })[0];
         }
 
         $scope.$watch('hospital', function(newValue) {
@@ -90,13 +91,18 @@ myApp.controller('ordersFromHospitalController',
     $scope.orderBead = function(ev, bead, hospital) {
       function dialogController($scope, $mdDialog, selectedAsof, bead, hospital) {
         $scope.selectedBead = bead.name_jp;
+        $scope.selectedBead_en = bead.name;
+        $scope.lotsize_hospital = bead.lotsize_hospital;
         $scope.asof = (selectedAsof) ? new Date(selectedAsof) : new Date();
 
-        $scope.ok = function(asof, qty) {
+        $scope.ok = function(asof, qty, comment_hospital) {
+          if (! hospital) {
+            alert('病院を選んでください。');
+          }
           $cookies.put('asofOrder', asof);
           var type = TranType.ORDER_FROM_HOSPITAL;
           var status = TranType.getTranStatus(type);
-          DataService.insertTransaction($filter('date')(asof, "yyyy/MM/dd"), type, hospital.id, bead.id, qty, qty, status);
+          DataService.insertTransaction($filter('date')(asof, "yyyy/MM/dd"), type, hospital.id, bead.id, qty, qty, status, null, comment_hospital);
           var undelivered_qty = bead.undelivered_qty + qty;
           DataService.updateBead(bead.id, null, null, null, null, null, null, null, null, null, null, undelivered_qty);
           $mdDialog.hide();

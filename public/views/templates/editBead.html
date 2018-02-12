@@ -1,6 +1,7 @@
 <md-dialog aria-label="Edit Bead">
   <md-toolbar class="md-primary">
       <div class="md-toolbar-tools">
+        <img ng-src="images/{{name}}.jpg" on-error-src="images/error.png" width="50px" height="50px" border="1" style="margin-right:10px; border:solid 2px white">
         <h2>Edit Bead: {{name}}</h2>
       </div>
   </md-toolbar>
@@ -8,37 +9,56 @@
   <md-content layout-padding layout="column" style="max-width:100%; max-height:100%;">
 
     <div id="mediumDiv">
-      <label>Bead Type: </label>
-      <md-select ng-model="type" aria-label="Bead Type:">
-        <md-option ng-value="type" ng-repeat="type in types">{{type}}</md-option>
-      </md-select>
+
+      <div layout="row" layout-align="start center">
+        <div>
+          <label>Bead Type:&nbsp;&nbsp;</label>
+        </div>
+        <div flex="25">
+          <md-select ng-model="type" aria-label="Bead Type:">
+            <md-option ng-value="type" ng-repeat="type in types">{{type}}</md-option>
+          </md-select>
+        </div>
+      </div>
 
       <div layout="row">
         <div class="form-group">
           <label for="refno">Reference:</label>
           <input class="form-control" type="number" ng-model="refno">
         </div>
-        <div class="form-group">
-          <label for="refno_chronic">Reference (Chronic):</label>
-          <input class="form-control" type="number" ng-model="refno_chronic">
+      </div>
+
+      <div layout="row">
+        <div flex class="form-group">
+          <label for="name_jp">Name (JP):</label>
+          <input class="form-control" type="text" ng-model="name_jp">
+        </div>
+
+        <div flex class="form-group">
+          <label for="name">Name (EN):</label>
+          <input class="form-control" type="text" ng-model="name">
         </div>
       </div>
 
       <div class="form-group">
-        <label for="name_jp">Name (JP):</label>
-        <input class="form-control" type="text" ng-model="name_jp">
+        <label for="description">Description (JP):</label>
+        <input class="form-control" type="text" ng-model="description">
       </div>
 
       <div class="form-group">
-        <label for="description">Description:</label>
-        <input class="form-control" type="text" ng-model="description">
+        <label for="description_en">Description (EN):</label>
+        <input class="form-control" type="text" ng-model="description_en">
       </div>
 
       <div layout="row">
         <div class="form-group">
-          <label for="lotsize">Lot size:</label>
+          <label for="lotsize">Lot Size:</label>
           <input class="form-control" type="number" ng-model="lotsize">
         </div>
+        <div class="form-group">
+            <label for="lotsize_hospital">Lot Size (Hospital):</label>
+            <input class="form-control" type="number" ng-model="lotsize_hospital">
+          </div>
         <div class="form-group">
           <label for="price">Price ($):</label>
           <input class="form-control" type="number" ng-model="price">
@@ -49,7 +69,7 @@
     <md-dialog-actions>
       <md-button class="md-warn md-raised" style="background-color:red" ng-click="delete()">Delete</md-button>
       <md-button class="md-warn md-raised" ng-click="cancel()">Cancel</md-button>
-      <md-button class="md-primary md-raised" ng-click="ok(name, type, lotsize, price, name_jp, description, refno, refno_chronic);">Update</md-button>
+      <md-button class="md-primary md-raised" ng-click="ok(name, type, lotsize, price, name_jp, description, refno, lotsize_hospital, description_en);">Update</md-button>
     </md-dialog-actions>
   </md-content>
 </md-dialog>

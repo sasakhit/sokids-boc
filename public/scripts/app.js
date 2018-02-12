@@ -41,11 +41,12 @@ myApp.config(['$routeProvider', '$mdThemingProvider', '$mdDateLocaleProvider', f
     //  templateUrl: '/views/templates/orderHistory.html',
     //  controller: 'orderHistoryController'
     //})
-    .when('/notImplemented', {
-      templateUrl: '/views/templates/notImplemented.html'
+    .when('/login', {
+      templateUrl: '/views/templates/login.html',
+      controller: 'loginController'
     })
     .otherwise({
-      redirectTo: '/beads'
+      redirectTo: '/login'
     });
 
     $mdThemingProvider.theme('default')

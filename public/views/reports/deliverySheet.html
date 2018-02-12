@@ -86,14 +86,14 @@
 
     <table align="center">
       <tr>
-        <th class="seqno">番号<br>()内は慢性</th>
+        <th class="seqno">番号</th>
         <th class="type">タイプ</th>
         <th colspan="2">ビーズ名 (日本語 / 英語)<br>説明</th>
         <th class="number">数量</th>
       </tr>
       <tbody ng-repeat="bead in beads | filter : { show: true }">
         <tr>
-          <td rowspan="2" align="center">{{bead.refno}}<span ng-show="bead.refno_chronic"><br>({{bead.refno_chronic}})</span></td>
+          <td rowspan="2" align="center">{{bead.refno}}</td>
           <td rowspan="2" align="center">{{bead.type_jp}}</td>
           <td class="name-jp">{{bead.name_jp}}</td>
           <td class="name-en">{{bead.name}}</td>

@@ -1,0 +1,43 @@
+<md-dialog aria-label="Edit Transaction">
+  <md-toolbar class="md-primary">
+      <div class="md-toolbar-tools">
+        <img ng-src="images/{{bead.name}}.jpg" on-error-src="images/error.png" width="50px" height="50px" border="1" style="margin-right:10px; border:solid 2px white">
+        <h2>取消: {{bead.name_jp}}</h2>
+      </div>
+  </md-toolbar>
+
+  <md-content layout-padding layout="column" style="max-width:100%; max-height:100%;">
+
+    <div id="mediumDiv">
+      <div class="form-group">
+        <label for="asof">注文日 (yyyy/mm/dd):</label><br>
+        <md-datepicker ng-model="asof" disabled></md-datepicker>
+      </div>
+
+      <label>病院名:</label>
+      <md-select ng-model="hospital" aria-label="Hospital:" ng-model-options="{trackBy: '$value.id'}" disabled>
+         <md-option ng-value="hospital" ng-repeat="hospital in hospitals">{{hospital.name}}</md-option>
+      </md-select>
+
+      <label>ビーズ名:</label>
+      <md-select ng-model="bead" aria-label="Bead:" ng-model-options="{trackBy: '$value.id'}" disabled>
+         <md-option ng-value="bead" ng-repeat="bead in beads">{{bead.name}}</md-option>
+      </md-select>
+
+      <div class="form-group">
+        <label for="qty">数量:</label>
+        <input class="form-control" type="number" ng-model="qty" disabled>
+      </div>
+
+      <div class="form-group">
+        <label for="comment">コメント:</label><br>
+        <textarea name="comment" cols="50" rows="2" ng-model="comment" disabled></textarea>
+      </div>
+    </div>
+
+    <md-dialog-actions>
+      <md-button class="md-warn md-raised" style="background-color:red" ng-click="delete()">取消</md-button>
+      <md-button class="md-warn md-raised" ng-click="cancel()">キャンセル</md-button>
+    </md-dialog-actions>
+  </md-content>
+</md-dialog>
