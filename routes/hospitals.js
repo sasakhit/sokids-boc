@@ -10,7 +10,8 @@ var pgp = require('pg-promise')(options);
 
 router.get('/',  function(req, res) {
   var results = [];
-  var sql = "SELECT id, name, postal, address, phone, dept, title, contact1, contact2, email, username, password FROM hospitals ORDER BY postal";
+  var sql = "SELECT id, name, postal, address, phone, dept, title, contact1, contact2, email, username, password "
+          + "FROM hospitals ORDER BY postal";
 
   connection.result(sql)
     .then(function (data) {
@@ -26,7 +27,12 @@ router.get('/',  function(req, res) {
 });
 
 router.put('/',  function(req, res) {
-  var newHospital = {
+  var results = [];
+  var sql = "UPDATE hospitals SET name = $1, postal = $2, address = $3, phone = $4, dept = $5, title = $6, "
+          + "                     contact1 = $7, contact2 = $8, email = $9, username = $10, password = $11 "
+          + "WHERE id = $12";
+  var updHospital = {
+    id: req.body.id,
     name: req.body.name,
     postal: req.body.postal,
     address: req.body.address,
@@ -35,13 +41,14 @@ router.put('/',  function(req, res) {
     title: req.body.title,
     contact1: req.body.contact1,
     contact2: req.body.contact2,
-    email: req.body.email
+    email: req.body.email,
+    username: req.body.username,
+    password: req.body.password
   };
 
-  var results = [];
-
-  connection.result("UPDATE hospitals SET postal = $1, address = $2, phone = $3, dept = $4, title = $5, contact1 = $6, contact2 = $7, email = $8 WHERE name = $9",
-    [newHospital.postal, newHospital.address, newHospital.phone, newHospital.dept, newHospital.title, newHospital.contact1, newHospital.contact2, newHospital.email, newHospital.name])
+  connection.result(sql,
+    [updHospital.name, updHospital.postal, updHospital.address, updHospital.phone, updHospital.dept, updHospital.title,
+     updHospital.contact1, updHospital.contact2, updHospital.email, updHospital.username, updHospital.password, updHospital.id])
       .then(function (data) {
       })
       .catch(function (error) {
@@ -56,7 +63,8 @@ router.put('/',  function(req, res) {
 
 router.post('/',  function(req, res) {
   var results = [];
-  var sql = "INSERT INTO hospitals VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)";
+  var sql = "INSERT INTO hospitals (name, postal, address, phone, dept, title, contact1, contact2, email, username, password) "
+          + "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)";
   var newHospital = {
     name: req.body.name,
     postal: req.body.postal,
@@ -66,30 +74,34 @@ router.post('/',  function(req, res) {
     title: req.body.title,
     contact1: req.body.contact1,
     contact2: req.body.contact2,
-    email: req.body.email
+    email: req.body.email,
+    username: req.body.username,
+    password: req.body.password
   };
 
-  connection.result(sql, [newHospital.name, newHospital.postal, newHospital.address, newHospital.phone, newHospital.dept, newHospital.title, newHospital.contact1, newHospital.contact2, newHospital.email])
-    .then(function (data) {
-    })
-    .catch(function (error) {
-      console.log("ERROR/post:", error);
-      res.send(false);
-    })
-    .finally(function () {
-      pgp.end();
-      res.send(true);
-    });
+  connection.result(sql,
+    [newHospital.name, newHospital.postal, newHospital.address, newHospital.phone, newHospital.dept, newHospital.title,
+     newHospital.contact1, newHospital.contact2, newHospital.email, newHospital.username, newHospital.password])
+      .then(function (data) {
+      })
+      .catch(function (error) {
+        console.log("ERROR/post:", error);
+        res.send(false);
+      })
+      .finally(function () {
+        pgp.end();
+        res.send(true);
+      });
 });
 
 router.put('/delete',  function(req, res) {
   var results = [];
-  var sql = "DELETE FROM hospitals WHERE name = $1";
+  var sql = "DELETE FROM hospitals WHERE id = $1";
   var delHospital = {
-    name: req.body.name
+    id: req.body.id
   };
 
-  connection.result(sql, [delHospital.name])
+  connection.result(sql, [delHospital.id])
     .then(function (data) {
     })
     .catch(function (error) {

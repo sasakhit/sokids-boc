@@ -13,7 +13,8 @@ myApp.controller('hospitalsController',
     }
 
     $scope.editHospital = function(ev, hospital) {
-      function dialogController($scope, $mdDialog, name, postal, address, phone, dept, title, contact1, contact2, email) {
+      function dialogController($scope, $mdDialog, id, name, postal, address, phone, dept, title, contact1, contact2, email, username, password) {
+        $scope.id = id;
         $scope.name = name;
         $scope.postal = postal;
         $scope.address = address;
@@ -23,9 +24,11 @@ myApp.controller('hospitalsController',
         $scope.contact1 = contact1;
         $scope.contact2 = contact2;
         $scope.email = email;
+        $scope.username = username;
+        $scope.password = password;
 
-        $scope.ok = function(postal, address, phone, dept, title, contact1, contact2, email) {
-          DataService.updateHospital(name, postal, address, phone, dept, title, contact1, contact2, email);
+        $scope.ok = function(name, postal, address, phone, dept, title, contact1, contact2, email, username, password) {
+          DataService.updateHospital(id, name, postal, address, phone, dept, title, contact1, contact2, email, username, password);
           $mdDialog.hide();
         }
 
@@ -35,7 +38,7 @@ myApp.controller('hospitalsController',
 
         $scope.delete = function() {
           if (confirm('Is it ok to delete Hospital: ' + name + ' ?')) {
-            DataService.deleteHospital(name);
+            DataService.deleteHospital(id);
             $mdDialog.hide();
           }
         }
@@ -54,6 +57,7 @@ myApp.controller('hospitalsController',
         parent: angular.element(document.body),
         preserveScope: true,
         locals: {
+          id: hospital.id,
           name: hospital.name,
           postal: hospital.postal,
           address: hospital.address,
@@ -62,7 +66,9 @@ myApp.controller('hospitalsController',
           title: hospital.title,
           contact1: hospital.contact1,
           contact2: hospital.contact2,
-          email: hospital.email
+          email: hospital.email,
+          username: hospital.username,
+          password: hospital.password
         }
       });
 
@@ -72,7 +78,7 @@ myApp.controller('hospitalsController',
     }
 
     $scope.insertHospital = function(ev) {
-      function dialogController($scope, $mdDialog, names, name, postal, address, phone, dept, title, contact1, contact2, email) {
+      function dialogController($scope, $mdDialog, names, name, postal, address, phone, dept, title, contact1, contact2, email, username, password) {
         $scope.names = names;
         $scope.name = name;
         $scope.postal = postal;
@@ -83,8 +89,10 @@ myApp.controller('hospitalsController',
         $scope.contact1 = contact1;
         $scope.contact2 = contact2;
         $scope.email = email;
+        $scope.username = username;
+        $scope.password = password;
 
-        $scope.ok = function(name, postal, address, phone, dept, title, contact1, contact2, email) {
+        $scope.ok = function(name, postal, address, phone, dept, title, contact1, contact2, email, username, password) {
           if (!name) {
             alert('Hospital Name should not be blank');
           }
@@ -92,7 +100,7 @@ myApp.controller('hospitalsController',
             alert('Hospital Name already exists');
           }
           else {
-            DataService.insertHospital(name, postal, address, phone, dept, title, contact1, contact2, email);
+            DataService.insertHospital(name, postal, address, phone, dept, title, contact1, contact2, email, username, password);
             $mdDialog.hide();
           }
         }
@@ -124,7 +132,9 @@ myApp.controller('hospitalsController',
           title: "",
           contact1: "",
           contact2: "",
-          email: ""
+          email: "",
+          username: "",
+          password: ""
         }
       });
 

@@ -5,10 +5,6 @@ myApp.config(['$routeProvider', '$mdThemingProvider', '$mdDateLocaleProvider', f
 
 
   $routeProvider
-    //.when('/dashboard', {
-    //  templateUrl: '/views/templates/inventory.html',
-    //  controller: 'inventoryController'
-    //})
     .when('/hospitals', {
       templateUrl: '/views/templates/hospitals.html',
       controller: 'hospitalsController'
@@ -33,14 +29,6 @@ myApp.config(['$routeProvider', '$mdThemingProvider', '$mdDateLocaleProvider', f
       templateUrl: '/views/templates/orderHistoryFromHospital.html',
       controller: 'orderHistoryFromHospitalController'
     })
-    //.when('/transaction_histrory', {
-    //  templateUrl: '/views/templates/transactionHistory.html',
-    //  controller: 'transactionHistoryController'
-    //})
-    //.when('/order_histrory', {
-    //  templateUrl: '/views/templates/orderHistory.html',
-    //  controller: 'orderHistoryController'
-    //})
     .when('/login', {
       templateUrl: '/views/templates/login.html',
       controller: 'loginController'

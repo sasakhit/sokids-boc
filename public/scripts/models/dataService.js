@@ -7,9 +7,6 @@ myApp.factory('DataService',
         insertTransaction : insertTransaction,
         updateTransaction : updateTransaction,
         deleteTransaction : deleteTransaction,
-        getInventorySummary : getInventorySummary,
-        getInventoryOrders : getInventoryOrders,
-        getInventoryDetails : getInventoryDetails,
         getBeads : getBeads,
         getTypesForFilter : getTypesForFilter,
         getTypesForFilterInJapanese : getTypesForFilterInJapanese,
@@ -21,9 +18,6 @@ myApp.factory('DataService',
         isFilteredByType : isFilteredByType,
         getBracketType : getBracketType,
         getTotalType : getTotalType,
-        insertInventory : insertInventory,
-        updateInventory : updateInventory,
-        deleteInventory : deleteInventory,
         insertBead : insertBead,
         updateBead : updateBead,
         deleteBead : deleteBead,
@@ -101,24 +95,6 @@ myApp.factory('DataService',
           });
 
         return deferred.promise;
-      }
-
-      function getInventorySummary() {
-        return $http.get('/dashboard/summary').then(function(response) {
-          return response.data;
-        });
-      }
-
-      function getInventoryOrders() {
-        return $http.get('/dashboard/orders').then(function(response) {
-          return response.data;
-        });
-      }
-
-      function getInventoryDetails() {
-        return $http.get('/dashboard/details').then(function(response) {
-          return response.data;
-        });
       }
 
       function getBeads() {
@@ -200,71 +176,6 @@ myApp.factory('DataService',
         }
       }
 
-      function insertInventory(inv, asof, name, qty, party, comment = null, linkid = null) {
-        var deferred = $q.defer();
-
-        $http.post('/dashboard', {asof: asof, name: name, qty: qty, party: party, comment: comment, linkid: linkid})
-          .success(function (data, status) {
-            if(status === 200 ){
-              deferred.resolve();
-            } else {
-              deferred.reject();
-            }
-          })
-          .error(function (data) {
-            deferred.reject();
-          })
-          .finally(function () {
-            $route.reload();
-          });
-
-        return deferred.promise;
-      }
-
-      function updateInventory(inv, asof, name, qty, party, comment) {
-        var id = inv.id;
-        var deferred = $q.defer();
-
-        $http.put('/dashboard', {id:id, asof:asof, name:name, qty:qty, party:party, comment:comment})
-          .success(function (data, status) {
-            if(status === 200 ){
-              deferred.resolve();
-            } else {
-              deferred.reject();
-            }
-          })
-          .error(function (data) {
-            deferred.reject();
-          })
-          .finally(function () {
-            $route.reload();
-          });
-
-        return deferred.promise;
-      }
-
-      function deleteInventory(inv) {
-        var id = inv.id;
-        var deferred = $q.defer();
-
-        $http.put('/dashboard/delete', {id: id})
-          .success(function (data, status) {
-            if(status === 200 ){
-              deferred.resolve();
-            } else {
-              deferred.reject();
-            }
-          })
-          .error(function (data) {
-            deferred.reject();
-          })
-          .finally(function () {
-            $route.reload();
-          });
-
-        return deferred.promise;
-      }
-
       function insertBead(name, type, lotsize, price, name_jp, description, refno, lotsize_hospital, description_en) {
         var deferred = $q.defer();
 
@@ -329,10 +240,10 @@ myApp.factory('DataService',
         return deferred.promise;
       }
 
-      function insertHospital(name, postal, address, phone, dept, title, contact1, contact2, email) {
+      function insertHospital(name, postal, address, phone, dept, title, contact1, contact2, email, username, password) {
         var deferred = $q.defer();
 
-        $http.post('/hospitals', {name:name, postal:postal, address:address, phone:phone, dept:dept, title:title, contact1:contact1, contact2:contact2, email:email})
+        $http.post('/hospitals', {name:name, postal:postal, address:address, phone:phone, dept:dept, title:title, contact1:contact1, contact2:contact2, email:email, username:username, password:password})
           .success(function (data, status) {
             if(status === 200 ){
               deferred.resolve();
@@ -350,10 +261,10 @@ myApp.factory('DataService',
         return deferred.promise;
       }
 
-      function updateHospital(name, postal, address, phone, dept, title, contact1, contact2, email) {
+      function updateHospital(id, name, postal, address, phone, dept, title, contact1, contact2, email, username, password) {
         var deferred = $q.defer();
 
-        $http.put('/hospitals', {name:name, postal:postal, address:address, phone:phone, dept:dept, title:title, contact1:contact1, contact2:contact2, email:email})
+        $http.put('/hospitals', {id:id, name:name, postal:postal, address:address, phone:phone, dept:dept, title:title, contact1:contact1, contact2:contact2, email:email, username:username, password:password})
           .success(function (data, status) {
             if(status === 200 ){
               deferred.resolve();
@@ -371,10 +282,10 @@ myApp.factory('DataService',
         return deferred.promise;
       }
 
-      function deleteHospital(name) {
+      function deleteHospital(id) {
         var deferred = $q.defer();
 
-        $http.put('/hospitals/delete', {name: name})
+        $http.put('/hospitals/delete', {id: id})
           .success(function (data, status) {
             if(status === 200 ){
               deferred.resolve();
