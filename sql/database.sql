@@ -37,7 +37,7 @@ CREATE TABLE beads
      );
 
 ALTER TABLE beads RENAME refno_chronic TO lotsize_hospital;
-ALTER TABLE beads ADD COLUMN description_en character varying(100);
+ALTER TABLE beads ADD COLUMN description_chronic character varying(100);
 
 
 CREATE TABLE transactions

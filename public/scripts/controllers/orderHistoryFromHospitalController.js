@@ -53,7 +53,8 @@ myApp.controller('orderHistoryFromHospitalController',
       var hospital_id = ($scope.hospital) ? $scope.hospital.id : -1;
       DataService.getTransactions(hospital_id).then(function(transaction) {
         //var rawData = _.filter(transaction, function(tran) { return tran.status === TranStatus.DELIVER || tran.status === TranStatus.DONE || tran.status === TranStatus.CANCEL });
-        var rawData = _.filter(transaction, function(tran) { return tran.type === TranType.ORDER_FROM_HOSPITAL });
+        //var rawData = _.filter(transaction, function(tran) { return tran.type === TranType.ORDER_FROM_HOSPITAL });
+        var rawData = _.filter(transaction, function(tran) { return tran.type === TranType.ORDER_FROM_HOSPITAL || ( tran.type === TranType.DELIVER_TO_HOSPITAL && ! tran.linkid )});
         $scope.transactions = _.map(rawData, function(data) {
           data.hospital = {'id':(data.hospital_id) ? data.hospital_id : TranType.getHospitalInWeb(data.type).id,
                            'name':(data.hospital_name) ? data.hospital_name : TranType.getHospitalInWeb(data.type).name};
@@ -65,7 +66,7 @@ myApp.controller('orderHistoryFromHospitalController',
             data.statusInWeb += '<br> - 未発送は ' + data.open_qty.toString() + ' 個';
           }
 
-          var link_trans = _.filter(transaction, function(link_tran) { return link_tran.linkid === data.id; });
+          var link_trans = _.filter(transaction, function(link_tran) { return link_tran.linkid === data.id && link_tran.status !== TranStatus.CANCEL; });
           if (link_trans.length > 0) {
             data.statusInWeb += _.reduce(link_trans, function(result, link_tran, index) {
               result += '<br> - ' + link_tran.asof + ' に ' + link_tran.qty.toString() + ' 個発送';
@@ -147,7 +148,7 @@ myApp.controller('orderHistoryFromHospitalController',
               DataService.updateTransaction(link_tran.id, null, null, null, null, updLinkTran.open_qty, updLinkTran.status);
             }
             if (updBead.is_update) {
-              DataService.updateBead(transaction.bead_id, null, null, null, null, null, null, null, null, updBead.stock_qty, updBead.unreceived_qty, updBead.undelivered_qty);
+              DataService.updateBead(transaction.bead_id, null, null, null, null, null, null, null, null, null, updBead.stock_qty, updBead.unreceived_qty, updBead.undelivered_qty);
             }
             $mdDialog.hide();
           }

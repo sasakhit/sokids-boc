@@ -3,6 +3,7 @@ myApp.value('TranType', {
   RECEIVE_FROM_SUPPLIER:  'RECEIVE_FROM_SUPPLIER',
   ORDER_FROM_HOSPITAL:    'ORDER_FROM_HOSPITAL',
   DELIVER_TO_HOSPITAL:    'DELIVER_TO_HOSPITAL',
+  ADJUST:                 'ADJUST',
   INITIALIZE:             'INITIALIZE',
   getTranStatus: function(type) {
     switch(type) {
@@ -24,6 +25,8 @@ myApp.value('TranType', {
         return 'Order <-';
       case this.DELIVER_TO_HOSPITAL:
         return 'Deliver ->';
+      case this.ADJUST:
+        return 'Adjust';
       case this.INITIALIZE:
         return 'Init';
       default:
@@ -66,6 +69,7 @@ myApp.value('BeadType', {
   PROCESS:      'Process',
   SPECIAL:      'Special',
   OTHER:        'Other',
+  INTERNAL:     'Internal',
   ALPHABET:     'Alphabet',
   NUMBER:       'Number',
   DISCONTINUED: 'Discontinued',
@@ -77,6 +81,8 @@ myApp.value('BeadType', {
         return 2;
       case this.OTHER:
         return 3;
+      case this.INTERNAL:
+        return 4;
       case this.ALPHABET:
         return 7;
       case this.NUMBER:
@@ -95,6 +101,8 @@ myApp.value('BeadType', {
         return 'スペシャル';
       case this.OTHER:
         return 'その他';
+      case this.INTERNAL:
+        return '内部向け';
       case this.ALPHABET:
         return 'アルファベット';
       case this.NUMBER:
@@ -113,6 +121,8 @@ myApp.value('BeadType', {
         return this.SPECIAL;
       case 'その他':
         return this.OTHER;
+      case '内部向け':
+        return this.INTERNAL;
       case 'アルファベット':
         return this.ALPHABET;
       case '数字':
@@ -122,5 +132,8 @@ myApp.value('BeadType', {
       default:
         return type;
     }
+  },
+  getInternalTypes: function() {
+    return [this.INTERNAL];
   }
 });

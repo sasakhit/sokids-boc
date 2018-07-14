@@ -29,24 +29,24 @@
 
       <div layout="row">
         <div flex class="form-group">
-          <label for="name_jp">Bead Name (JP):</label>
+          <label for="name_jp">Bead Name:</label>
           <input class="form-control" type="text" ng-model="name_jp">
         </div>
 
         <div flex class="form-group">
-          <label for="name">Bead Name (EN):</label>
+          <label for="name">Bead Name (English):</label>
           <input class="form-control" type="text" ng-model="name">
         </div>
       </div>
 
       <div class="form-group">
-        <label for="description">Description (JP):</label>
+        <label for="description">Description:</label>
         <input class="form-control" type="text" ng-model="description">
       </div>
 
       <div class="form-group">
-        <label for="description_en">Description (EN):</label>
-        <input class="form-control" type="text" ng-model="description_en">
+        <label for="description_chronic">Description (Chronic):</label>
+        <input class="form-control" type="text" ng-model="description_chronic">
       </div>
 
       <div layout="row">
@@ -67,7 +67,7 @@
 
     <md-dialog-actions>
       <md-button class="md-warn md-raised" ng-click="cancel()">Cancel</md-button>
-      <md-button class="md-primary md-raised" ng-click="ok(name, type, lotsize, price, name_jp, description, refno, lotsize_hospital, description_en)">Insert</md-button>
+      <md-button class="md-primary md-raised" ng-click="ok(name, type, lotsize, price, name_jp, description, refno, lotsize_hospital, description_chronic)">Insert</md-button>
     </md-dialog-actions>
   </md-content>
 </md-dialog>

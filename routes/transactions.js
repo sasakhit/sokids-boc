@@ -36,7 +36,8 @@ router.get('/',  function(req, res) {
 
 router.post('/',  function(req, res) {
   var results = [];
-  var sql = "INSERT INTO transactions (asof, type, hospital_id, bead_id, qty, open_qty, status, comment, comment_hospital, linkid) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)"
+  var sql = "INSERT INTO transactions (asof, type, hospital_id, bead_id, qty, open_qty, status, comment, comment_hospital, linkid) "
+          + "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)"
   var newTransaction = {
     asof: req.body.asof,
     type: req.body.type,
@@ -89,7 +90,8 @@ router.put('/update',  function(req, res) {
   };
 
   connection.result(sql, [updTransaction.asof, updTransaction.hospital_id, updTransaction.bead_id,
-                          updTransaction.qty, updTransaction.open_qty, updTransaction.status, updTransaction.comment, updTransaction.comment_hospital, updTransaction.id])
+                          updTransaction.qty, updTransaction.open_qty, updTransaction.status, 
+                          updTransaction.comment, updTransaction.comment_hospital, updTransaction.id])
     .then(function (data) {
     })
     .catch(function (error) {

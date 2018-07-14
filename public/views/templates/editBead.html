@@ -10,7 +10,7 @@
 
     <div id="mediumDiv">
 
-      <div layout="row" layout-align="start center">
+      <div layout="row" layout-align="start center" style="margin-top:-20px">
         <div>
           <label>Bead Type:&nbsp;&nbsp;</label>
         </div>
@@ -22,32 +22,28 @@
       </div>
 
       <div layout="row">
-        <div class="form-group">
+        <div flex="15" class="form-group">
           <label for="refno">Reference:</label>
           <input class="form-control" type="number" ng-model="refno">
         </div>
-      </div>
-
-      <div layout="row">
         <div flex class="form-group">
-          <label for="name_jp">Name (JP):</label>
+          <label for="name_jp">Name:</label>
           <input class="form-control" type="text" ng-model="name_jp">
         </div>
-
         <div flex class="form-group">
-          <label for="name">Name (EN):</label>
+          <label for="name">Name (English):</label>
           <input class="form-control" type="text" ng-model="name">
         </div>
       </div>
 
-      <div class="form-group">
-        <label for="description">Description (JP):</label>
+      <div flex class="form-group">
+        <label for="description">Description:</label>
         <input class="form-control" type="text" ng-model="description">
       </div>
 
-      <div class="form-group">
-        <label for="description_en">Description (EN):</label>
-        <input class="form-control" type="text" ng-model="description_en">
+      <div flex class="form-group">
+        <label for="description_chronic">Description (Chronic):</label>
+        <input class="form-control" type="text" ng-model="description_chronic">
       </div>
 
       <div layout="row">
@@ -56,20 +52,42 @@
           <input class="form-control" type="number" ng-model="lotsize">
         </div>
         <div class="form-group">
-            <label for="lotsize_hospital">Lot Size (Hospital):</label>
-            <input class="form-control" type="number" ng-model="lotsize_hospital">
-          </div>
+          <label for="lotsize_hospital">Lot Size (Hospital):</label>
+          <input class="form-control" type="number" ng-model="lotsize_hospital">
+        </div>
         <div class="form-group">
           <label for="price">Price ($):</label>
           <input class="form-control" type="number" ng-model="price">
         </div>
       </div>
+
+      <hr style="margin-top:-3px">
+      <div style="margin-top:-3px">
+        <label>Adjust Stock Qty</label>
+      </div>
+      <div layout="row" layout-align="start center" style="margin-top:-10px">
+        <label>&nbsp;&nbsp;&nbsp;Qty:&nbsp;&nbsp;</label>
+        <div class="form-group" flex="15">
+          <input class="form-control" type="number" ng-model="stock_qty">
+        </div>
+        <label>&nbsp;&nbsp;&nbsp;Reason:&nbsp;&nbsp;</label>
+        <div flex="30">
+          <md-select ng-model="reason">
+            <md-option ng-value="reason" ng-repeat="reason in reasons">{{reason.name}}</md-option>
+          </md-select>
+        </div>
+        <label>&nbsp;&nbsp;&nbsp;Date:</label>
+        <div class="form-group">
+          <md-datepicker ng-model="asof"></md-datepicker>
+        </div>
+      </div>
+
     </div>
 
     <md-dialog-actions>
       <md-button class="md-warn md-raised" style="background-color:red" ng-click="delete()">Delete</md-button>
       <md-button class="md-warn md-raised" ng-click="cancel()">Cancel</md-button>
-      <md-button class="md-primary md-raised" ng-click="ok(name, type, lotsize, price, name_jp, description, refno, lotsize_hospital, description_en);">Update</md-button>
+      <md-button class="md-primary md-raised" ng-click="ok(name, type, lotsize, price, name_jp, description, refno, lotsize_hospital, description_chronic, stock_qty, reason, asof)">Update</md-button>
     </md-dialog-actions>
   </md-content>
 </md-dialog>

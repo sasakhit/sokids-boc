@@ -159,6 +159,7 @@ myApp.controller('transactionsController',
                   updBead.unreceived_qty = bead.unreceived_qty + movement;
                   updTran.open_qty = transaction.open_qty + movement;
                   if (transaction.status == TranStatus.DONE) updTran.status = TranStatus.RECEIVE;
+                  if (updTran.open_qty == 0) updTran.status = TranStatus.DONE;
                   updBead.is_update = true;
                 }
                 break;
@@ -202,7 +203,8 @@ myApp.controller('transactionsController',
                 }
                 break;
               default:
-                break;
+                alert('Cannot edit bead for this transaction type');
+                return;
             }
           }
 
@@ -211,10 +213,10 @@ myApp.controller('transactionsController',
             DataService.updateTransaction(link_tran.id, null, null, null, null, updLinkTran.open_qty, updLinkTran.status, null, null);
           }
           if (updBead.is_update) {
-            DataService.updateBead(transaction.bead_id, null, null, null, null, null, null, null, null, updBead.stock_qty, updBead.unreceived_qty, updBead.undelivered_qty);
+            DataService.updateBead(transaction.bead_id, null, null, null, null, null, null, null, null, null, updBead.stock_qty, updBead.unreceived_qty, updBead.undelivered_qty);
           }
           if (updBead2.is_update) {
-            DataService.updateBead(bead.id, null, null, null, null, null, null, null, null, updBead2.stock_qty, updBead2.unreceived_qty, updBead2.undelivered_qty);
+            DataService.updateBead(bead.id, null, null, null, null, null, null, null, null, null, updBead2.stock_qty, updBead2.unreceived_qty, updBead2.undelivered_qty);
           }
           $mdDialog.hide();
         }
@@ -266,8 +268,13 @@ myApp.controller('transactionsController',
                 updBead.is_update = true;
                 updLinkTran.is_update = true;
                 break;
-              default:
+              case TranType.ADJUST:
+                updBead.stock_qty = transaction.bead.stock_qty - transaction.qty;
+                updBead.is_update = true;
                 break;
+              default:
+                alert('Cannot delete transaction for this transaction type');
+                return;
             }
 
             //DataService.deleteTransaction(transaction.id);
@@ -276,7 +283,7 @@ myApp.controller('transactionsController',
               DataService.updateTransaction(link_tran.id, null, null, null, null, updLinkTran.open_qty, updLinkTran.status);
             }
             if (updBead.is_update) {
-              DataService.updateBead(transaction.bead_id, null, null, null, null, null, null, null, null, updBead.stock_qty, updBead.unreceived_qty, updBead.undelivered_qty);
+              DataService.updateBead(transaction.bead_id, null, null, null, null, null, null, null, null, null, updBead.stock_qty, updBead.unreceived_qty, updBead.undelivered_qty);
             }
             $mdDialog.hide();
           }
@@ -315,14 +322,20 @@ myApp.controller('transactionsController',
         $scope.asof = (selectedAsof) ? new Date(selectedAsof) : new Date();
 
         $scope.ok = function(asof, qty) {
+          if (!qty) {
+            alert('Quantity is blank');
+            return;
+          }
+
           if (qty > transaction.open_qty) {
             alert('Receive quantity should be <= Open quantity');
+            return;
           } else {
             $cookies.put('asofRecv', asof);
             var type = TranType.RECEIVE_FROM_SUPPLIER;
             var hospital_id = 0;
             var status = TranType.getTranStatus(type);
-            DataService.insertTransaction($filter('date')(asof, "yyyy/MM/dd"), type, 0, transaction.bead_id, qty, null, status, transaction.id);
+            DataService.insertTransaction($filter('date')(asof, "yyyy/MM/dd"), type, hospital_id, transaction.bead_id, qty, null, status, null, null, transaction.id);
 
             var open_qty = transaction.open_qty - qty;
             status = (open_qty == 0) ? TranStatus.DONE : null;
@@ -330,7 +343,7 @@ myApp.controller('transactionsController',
 
             var stock_qty = bead.stock_qty + qty;
             var unreceived_qty = bead.unreceived_qty - qty;
-            DataService.updateBead(transaction.bead_id, null, null, null, null, null, null, null, null, stock_qty, unreceived_qty, null);
+            DataService.updateBead(transaction.bead_id, null, null, null, null, null, null, null, null, null, stock_qty, unreceived_qty, null);
             $mdDialog.hide();
           }
         }
@@ -373,14 +386,22 @@ myApp.controller('transactionsController',
         $scope.asof = (selectedAsof) ? new Date(selectedAsof) : new Date();
 
         $scope.ok = function(asof, qty, comment) {
+          if (!qty) {
+            alert('Quantity is blank');
+            return;
+          }
+
           if (qty > transaction.open_qty) {
             alert('Deliver quantity should be <= Open quantity');
+            return;
+          } else if (qty > bead.stock_qty) {
+            alert('Deliver quantity should be <= Stock quantity');
+            return;
           } else {
             $cookies.put('asofDelv', asof);
             var type = TranType.DELIVER_TO_HOSPITAL;
-            var hospital_id = 0;
             var status = TranType.getTranStatus(type);
-            DataService.insertTransaction($filter('date')(asof, "yyyy/MM/dd"), type, transaction.hospital.id, transaction.bead_id, qty, null, status, transaction.id);
+            DataService.insertTransaction($filter('date')(asof, "yyyy/MM/dd"), type, transaction.hospital.id, transaction.bead_id, qty, null, status, null, null, transaction.id);
 
             var open_qty = transaction.open_qty - qty;
             status = (open_qty == 0) ? TranStatus.DONE : null;
@@ -388,7 +409,7 @@ myApp.controller('transactionsController',
 
             var stock_qty = bead.stock_qty - qty;
             var undelivered_qty = bead.undelivered_qty - qty;
-            DataService.updateBead(transaction.bead_id, null, null, null, null, null, null, null, null, stock_qty, null, undelivered_qty);
+            DataService.updateBead(transaction.bead_id, null, null, null, null, null, null, null, null, null, stock_qty, null, undelivered_qty);
             $mdDialog.hide();
           }
         }

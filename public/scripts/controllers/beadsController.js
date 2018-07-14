@@ -4,6 +4,7 @@ myApp.controller('beadsController',
 
     LoginService.loginCheck();
     getBeads();
+    getHospitals();
 
     function getBeads() {
       DataService.getBeads().then(function(data) {
@@ -27,6 +28,12 @@ myApp.controller('beadsController',
       });
     }
 
+    function getHospitals() {
+      DataService.getHospitals().then(function(data) {
+        $scope.hospitals = _.uniq(_.map(data, function(hospital) { return {'id':hospital.id, 'name':hospital.name, 'postal':hospital.postal}; }), 'id');
+      });
+    }
+
     $scope.orderBead = function(ev, bead) {
       function dialogController($scope, $mdDialog, selectedAsof, bead) {
         $scope.selectedBead = bead.name;
@@ -40,7 +47,7 @@ myApp.controller('beadsController',
           var status = TranType.getTranStatus(type);
           DataService.insertTransaction($filter('date')(asof, "yyyy/MM/dd"), type, hospital_id, bead.id, qty, qty, status);
           var unreceived_qty = bead.unreceived_qty + qty;
-          DataService.updateBead(bead.id, null, null, null, null, null, null, null, null, null, unreceived_qty, null);
+          DataService.updateBead(bead.id, null, null, null, null, null, null, null, null, null, null, unreceived_qty, null);
           $mdDialog.hide();
         }
 
@@ -73,7 +80,7 @@ myApp.controller('beadsController',
     }
 
     $scope.editBead = function(ev, bead) {
-      function dialogController($scope, $mdDialog, types, id, name, type, lotsize, price, name_jp, description, refno, lotsize_hospital, description_en) {
+      function dialogController($scope, $mdDialog, types, id, name, type, lotsize, price, name_jp, description, refno, lotsize_hospital, description_chronic, stock_qty, reasons, selectedAsof) {
         $scope.types = types;
         $scope.id = id;
         $scope.name = name;
@@ -84,9 +91,13 @@ myApp.controller('beadsController',
         $scope.description = description;
         $scope.refno = refno;
         $scope.lotsize_hospital = lotsize_hospital;
-        $scope.description_en = description_en;
+        $scope.description_chronic = description_chronic;
+        $scope.stock_qty = stock_qty;
+        $scope.reasons = reasons;
+        $scope.reason = reasons[0];
+        $scope.asof = (selectedAsof) ? new Date(selectedAsof) : new Date();
 
-        $scope.ok = function(name, type, lotsize, price, name_jp, description, refno, lotsize_hospital, description_en) {
+        $scope.ok = function(name, type, lotsize, price, name_jp, description, refno, lotsize_hospital, description_chronic, stock_qty_new, reason, asof) {
           if (!type) {
             //alert('Bead Type should not be blank');
             Utils.dialog('Bead Type should not be blank');
@@ -95,8 +106,14 @@ myApp.controller('beadsController',
             //alert('Lot Size should not be blank');
             Utils.dialog('Lot Size should not be blank');
           }
-          else {
-            DataService.updateBead(id, name, type, lotsize, price, name_jp, description, refno, lotsize_hospital, description_en);
+          else if (stock_qty_new !== stock_qty) {
+            $cookies.put('asofAdjust', asof);
+            var qty = stock_qty_new - stock_qty;
+            DataService.insertTransaction($filter('date')(asof, "yyyy/MM/dd"), TranType.ADJUST, reason.id, id, qty, null, null, null, null, null);
+            DataService.updateBead(id, name, type, lotsize, price, name_jp, description, refno, lotsize_hospital, description_chronic, stock_qty_new);
+            $mdDialog.hide();
+          } else {
+            DataService.updateBead(id, name, type, lotsize, price, name_jp, description, refno, lotsize_hospital, description_chronic);
             $mdDialog.hide();
           }
         }
@@ -136,7 +153,10 @@ myApp.controller('beadsController',
           description: bead.description,
           refno: bead.refno,
           lotsize_hospital: bead.lotsize_hospital,
-          description_en: bead.description_en
+          description_chronic: bead.description_chronic,
+          stock_qty: bead.stock_qty,
+          reasons: _.filter($scope.hospitals, function(hospital) { return hospital.postal == ''; }),
+          selectedAsof: $cookies.get('asofAdjust'),
         }
       });
 
@@ -146,7 +166,7 @@ myApp.controller('beadsController',
     }
 
     $scope.newBead = function(ev) {
-      function dialogController($scope, $mdDialog, names, types, name, type, lotsize, price, name_jp, description, refno, lotsize_hospital, description_en) {
+      function dialogController($scope, $mdDialog, names, types, name, type, lotsize, price, name_jp, description, refno, lotsize_hospital, description_chronic) {
         $scope.names = names;
         $scope.types = types;
         $scope.name = name;
@@ -157,9 +177,9 @@ myApp.controller('beadsController',
         $scope.description = description;
         $scope.refno = refno;
         $scope.lotsize_hospital = lotsize_hospital;
-        $scope.description_en = description_en;
+        $scope.description_chronic = description_chronic;
 
-        $scope.ok = function(name, type, lotsize, price, name_jp, description, refno, lotsize_hospital, description_en) {
+        $scope.ok = function(name, type, lotsize, price, name_jp, description, refno, lotsize_hospital, description_chronic) {
           if (!name) {
             alert('Bead Name should not be blank');
           }
@@ -170,7 +190,7 @@ myApp.controller('beadsController',
             alert('Bead Type should not be blank');
           }
           else {
-            DataService.insertBead(name, type, lotsize, price, name_jp, description, refno, lotsize_hospital, description_en);
+            DataService.insertBead(name, type, lotsize, price, name_jp, description, refno, lotsize_hospital, description_chronic);
             $mdDialog.hide();
           }
         }
@@ -203,7 +223,7 @@ myApp.controller('beadsController',
           description: "",
           refno: null,
           lotsize_hospital: null,
-          description_en: null
+          description_chronic: null
         }
       });
 

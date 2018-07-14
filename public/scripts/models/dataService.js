@@ -176,10 +176,10 @@ myApp.factory('DataService',
         }
       }
 
-      function insertBead(name, type, lotsize, price, name_jp, description, refno, lotsize_hospital, description_en) {
+      function insertBead(name, type, lotsize, price, name_jp, description, refno, lotsize_hospital, description_chronic) {
         var deferred = $q.defer();
 
-        $http.post('/beads', {name:name, type:type, lotsize:lotsize, price:price, name_jp:name_jp, description:description, refno:refno, lotsize_hospital:lotsize_hospital, description_en:description_en})
+        $http.post('/beads', {name:name, type:type, lotsize:lotsize, price:price, name_jp:name_jp, description:description, refno:refno, lotsize_hospital:lotsize_hospital, description_chronic:description_chronic})
           .success(function (data, status) {
             if (status === 200 ) {
               deferred.resolve();
@@ -197,11 +197,11 @@ myApp.factory('DataService',
         return deferred.promise;
       }
 
-      function updateBead(id, name, type, lotsize, price, name_jp, description, refno, lotsize_hospital, description_en, stock_qty = null, unreceived_qty = null, undelivered_qty = null) {
+      function updateBead(id, name, type, lotsize, price, name_jp, description, refno, lotsize_hospital, description_chronic = null, stock_qty = null, unreceived_qty = null, undelivered_qty = null) {
         var deferred = $q.defer();
 
         $http.put('/beads', {id:id, name:name, type:type, lotsize:lotsize, price:price, name_jp:name_jp, description:description,
-                             refno:refno, lotsize_hospital:lotsize_hospital, description_en:description_en, stock_qty:stock_qty, unreceived_qty:unreceived_qty, undelivered_qty:undelivered_qty})
+                             refno:refno, lotsize_hospital:lotsize_hospital, description_chronic:description_chronic, stock_qty:stock_qty, unreceived_qty:unreceived_qty, undelivered_qty:undelivered_qty})
           .success(function (data, status) {
             if (status === 200 ) {
               deferred.resolve();

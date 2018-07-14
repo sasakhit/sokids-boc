@@ -22,7 +22,7 @@
           <th class="col-md-1 col-sm-1 col-xs-1">タイプ</th>
           <th class="col-md-1 col-sm-1 col-xs-1">番号</th>
           <th class="col-md-2 col-sm-2 col-xs-2">ビーズ名<br>(英語)</th>
-          <th class="col-md-3 col-sm-3 col-xs-3">説明</th>
+          <th class="col-md-3 col-sm-3 col-xs-3">処置<br>(慢性)</th>
           <th class="col-md-1 col-sm-1 col-xs-1">注文数</th>
         </tr>
       </thead>
@@ -31,9 +31,9 @@
           <td class="hidden-xs"><button class="btn btn-danger btn-sm" ng-click="orderBead($event, bead, hospital)">注文</button></td>
           <td class="hidden-xs"><img ng-src="images/{{bead.name}}.jpg" on-error-src="images/error.png" width="50px" height="50px"></td>
           <td>{{bead.type_jp}}</td>
-          <td>{{bead.refno}}<span ng-show="bead.refno_chronic"><br>({{bead.refno_chronic}})</span></td>
-          <td>{{bead.name_jp}}<br>{{bead.name}}</td>
-          <td>{{bead.description}}</td>
+          <td>{{bead.refno}}</td>
+          <td>{{bead.name_jp}}<br><span ng-show="bead.name">({{bead.name}})</span></td>
+          <td>{{bead.description}}<br><span ng-show="bead.description_chronic">({{bead.description_chronic}})</span></td>
           <td>{{order[bead.name]}}</td>
         </tr>
       </tbody>

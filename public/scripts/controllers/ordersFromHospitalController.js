@@ -23,7 +23,7 @@ myApp.controller('ordersFromHospitalController',
         var transactions = data;
 
         $scope.order = _.reduce(transactions, function(order, transaction) {
-          if (transaction.type === TranType.ORDER_FROM_HOSPITAL && transaction.open_qty > 0) {
+          if (transaction.type === TranType.ORDER_FROM_HOSPITAL && transaction.status !== TranStatus.CANCEL && transaction.open_qty > 0) {
             if (order[transaction.bead_name]) {
               order[transaction.bead_name] += transaction.open_qty;
             } else {
@@ -39,13 +39,9 @@ myApp.controller('ordersFromHospitalController',
       var promise = DataService.getHospitals().then(function(data) {
         $scope.hospitals = data;
 
-        //var user = JSON.parse(window.localStorage.boc_user);
-        //$scope.isAdmin = user.isadmin;
-
         if ($scope.isAdmin && $scope.hospital) {
           $scope.hospital = _.filter($scope.hospitals, function(hospital) { return hospital.name === $scope.hospital.name; })[0];
         } else {
-          //var username = window.localStorage.boc_user;
           $scope.hospital = _.filter($scope.hospitals, function(hospital) { return hospital.username === $rootScope.username; })[0];
         }
 
@@ -63,8 +59,9 @@ myApp.controller('ordersFromHospitalController',
 
     function getBeads() {
       DataService.getBeads().then(function(data) {
-        $scope.beads = data;
-        $scope.beads = _.map(data, function(bead) {
+        //$scope.beads = data;
+        var beads = _.filter(data, function(bead) { return BeadType.getInternalTypes().indexOf(bead.type) === -1; });
+        $scope.beads = _.map(beads, function(bead) {
           bead.type_jp = BeadType.getTypeInJapanese(bead.type);
           return bead;
         })
@@ -104,7 +101,7 @@ myApp.controller('ordersFromHospitalController',
           var status = TranType.getTranStatus(type);
           DataService.insertTransaction($filter('date')(asof, "yyyy/MM/dd"), type, hospital.id, bead.id, qty, qty, status, null, comment_hospital);
           var undelivered_qty = bead.undelivered_qty + qty;
-          DataService.updateBead(bead.id, null, null, null, null, null, null, null, null, null, null, undelivered_qty);
+          DataService.updateBead(bead.id, null, null, null, null, null, null, null, null, null, null, null, undelivered_qty);
           $mdDialog.hide();
         }
 

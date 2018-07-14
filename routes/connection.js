@@ -16,7 +16,6 @@ var cn = {
   password: 'postgres'
 };
 
-
 var db = pgp(cn); // database instance;
 
 module.exports = db;
